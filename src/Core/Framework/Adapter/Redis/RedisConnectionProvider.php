@@ -1,0 +1,44 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Framework\Adapter\Redis;
+
+use HeyPanel\Core\Framework\Adapter\AdapterException;
+use Psr\Container\ContainerInterface;
+
+/**
+ * RedisConnection corresponds to a return type of symfony's RedisAdapter::createConnection and may change with symfony update.
+ *
+ * @phpstan-type RedisConnection \Redis|\RedisArray|\RedisCluster|\Predis\ClientInterface|\Relay\Relay
+ */
+class RedisConnectionProvider
+{
+    /**
+     * @internal
+     */
+    public function __construct(
+        private ContainerInterface $serviceLocator,
+    ) {
+    }
+
+    /**
+     * @return RedisConnection
+     */
+    public function getConnection(string $connectionName)
+    {
+        if (!$this->hasConnection($connectionName)) {
+            throw AdapterException::unknownRedisConnection($connectionName);
+        }
+
+        return $this->serviceLocator->get($this->getServiceName($connectionName));
+    }
+
+    public function hasConnection(string $connectionName): bool
+    {
+        return $this->serviceLocator->has($this->getServiceName($connectionName));
+    }
+
+    private function getServiceName(string $connectionName): string
+    {
+        return 'heypanel.redis.connection.' . $connectionName;
+    }
+}

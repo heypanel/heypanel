@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Filesystem -->
+        <service id="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory">
+            <argument type="tagged_iterator" tag="heypanel.filesystem.factory"/>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.public" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="factory"/>
+            <argument>%heypanel.filesystem.public%</argument>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.private" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="privateFactory"/>
+            <argument>%heypanel.filesystem.private%</argument>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.temp" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="privateFactory"/>
+            <argument>%heypanel.filesystem.temp%</argument>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.theme" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="factory"/>
+            <argument>%heypanel.filesystem.theme%</argument>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.sitemap" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="factory"/>
+            <argument>%heypanel.filesystem.sitemap%</argument>
+        </service>
+
+        <service class="League\Flysystem\FilesystemOperator" id="heypanel.filesystem.asset" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory" method="factory"/>
+            <argument>%heypanel.filesystem.asset%</argument>
+        </service>
+
+        <service class="HeyPanel\Core\Framework\Adapter\Filesystem\Adapter\LocalFactory" id="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory.local">
+            <tag name="heypanel.filesystem.factory"/>
+        </service>
+
+        <service class="HeyPanel\Core\Framework\Adapter\Filesystem\Adapter\AwsS3v3Factory" id="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory.amazon_s3">
+            <tag name="heypanel.filesystem.factory"/>
+        </service>
+
+        <service class="HeyPanel\Core\Framework\Adapter\Filesystem\Adapter\GoogleStorageFactory" id="HeyPanel\Core\Framework\Adapter\Filesystem\FilesystemFactory.google_storage">
+            <tag name="heypanel.filesystem.factory"/>
+        </service>
+
+        <service id="console.command.assets_install" class="HeyPanel\Core\Framework\Adapter\Asset\AssetInstallCommand">
+            <argument type="service" id="kernel"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Plugin\Util\AssetService"/>
+            <tag name="console.command"/>
+        </service>
+
+        <!-- Assets -->
+        <service id="heypanel.asset.public" class="HeyPanel\Core\Framework\Adapter\Asset\FallbackUrlPackage" lazy="true">
+            <argument type="collection">
+                <argument>%heypanel.filesystem.public.url%</argument>
+            </argument>
+            <argument type="service" id="assets.empty_version_strategy"/>
+            <argument type="service" id="request_stack" on-invalid="null"/>
+            <tag name="heypanel.asset" asset="public"/>
+        </service>
+
+        <service id="heypanel.asset.public.version_strategy" class="HeyPanel\Core\Framework\Adapter\Asset\FlysystemLastModifiedVersionStrategy">
+            <argument>theme-metaData</argument>
+            <argument type="service" id="heypanel.filesystem.public"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+
+        <service id="heypanel.asset.theme.version_strategy" class="HeyPanel\Core\Framework\Adapter\Asset\FlysystemLastModifiedVersionStrategy">
+            <argument>theme-metaData</argument>
+            <argument type="service" id="heypanel.filesystem.theme"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+
+        <service id="heypanel.asset.asset.version_strategy" class="HeyPanel\Core\Framework\Adapter\Asset\FlysystemLastModifiedVersionStrategy">
+            <argument>asset-metaData</argument>
+            <argument type="service" id="heypanel.filesystem.asset"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+
+        <service id="heypanel.asset.asset" class="HeyPanel\Core\Framework\Adapter\Asset\FallbackUrlPackage" lazy="true">
+            <argument type="collection">
+                <argument>%heypanel.filesystem.asset.url%</argument>
+            </argument>
+            <argument type="service" id="heypanel.asset.asset.version_strategy"/>
+            <argument type="service" id="request_stack" on-invalid="null"/>
+            <tag name="heypanel.asset" asset="asset"/>
+        </service>
+
+        <service id="heypanel.asset.asset_without_versioning" class="HeyPanel\Core\Framework\Adapter\Asset\FallbackUrlPackage" lazy="true">
+            <argument type="collection">
+                <argument>%heypanel.filesystem.asset.url%</argument>
+            </argument>
+            <argument type="service" id="assets.empty_version_strategy"/>
+            <argument type="service" id="request_stack" on-invalid="null"/>
+        </service>
+
+        <service id="heypanel.asset.sitemap" class="HeyPanel\Core\Framework\Adapter\Asset\FallbackUrlPackage" lazy="true">
+            <argument type="collection">
+                <argument>%heypanel.filesystem.sitemap.url%</argument>
+            </argument>
+            <argument type="service" id="assets.empty_version_strategy"/>
+            <argument type="service" id="request_stack" on-invalid="null"/>
+            <tag name="heypanel.asset" asset="sitemap"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Adapter\Filesystem\Plugin\CopyBatchInputFactory"/>
+    </services>
+</container>

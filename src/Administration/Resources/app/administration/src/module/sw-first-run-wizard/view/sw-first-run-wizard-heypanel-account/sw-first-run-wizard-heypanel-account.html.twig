@@ -1,0 +1,71 @@
+{% block sw_first_run_wizard_heypanel_account %}
+<div class="sw-first-run-wizard-heypanel-account">
+    <sw-container columns="1fr 1fr">
+        <img
+            class="sw-first-run-wizard-heypanel-account__illustration"
+            :src="assetFilter('/administration/administration/static/img/first-run-wizard/heypanel-account.svg')"
+            alt=""
+        >
+        <div>
+            <h5 class="headline">
+                {{ $tc('sw-first-run-wizard.heypanelAccount.headline') }}
+            </h5>
+            <p
+                class="message"
+                v-html="$tc('sw-first-run-wizard.heypanelAccount.message')"
+            ></p>
+            <p class="create-account">
+                {{ $tc('sw-first-run-wizard.heypanelAccount.registerAccountText') }}
+                <a
+                    class="external-link"
+                    :href="$tc('sw-first-run-wizard.heypanelAccount.registerAccountUrl')"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    {{ $tc('sw-first-run-wizard.heypanelAccount.registerAccountHere') }}
+                </a>.
+            </p>
+            <div class="input-fields">
+
+                <mt-text-field
+                    v-model="heypanelId"
+                    name="heypanelId"
+                    validation="required"
+                    :label="$tc('sw-first-run-wizard.heypanelAccount.emailAddressLabel')"
+                    :placeholder="$tc('sw-first-run-wizard.heypanelAccount.emailAddressPlaceholder')"
+                />
+            </div>
+
+            <div class="input-fields">
+                <mt-password-field
+                    v-model="password"
+                    :label="$tc('sw-first-run-wizard.heypanelAccount.passwordLabel')"
+                    :placeholder="$tc('sw-first-run-wizard.heypanelAccount.passwordPlaceholder')"
+                />
+            </div>
+            <p class="forgot-password">
+                <a
+                    class="external-link"
+                    :href="$tc('sw-first-run-wizard.heypanelAccount.forgotPasswordUrl')"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    {{ $tc('sw-first-run-wizard.heypanelAccount.forgotPasswordText') }}
+                </a>
+            </p>
+
+            <div
+                v-if="accountError"
+                class="sw-first-run-wizard-heypanel-account__error"
+            >
+                <mt-banner
+                    :title="$tc('global.default.error')"
+                    variant="critical"
+                >
+                    {{ $tc('sw-first-run-wizard.error.messageLoginDataInvalid') }}
+                </mt-banner>
+            </div>
+        </div>
+    </sw-container>
+</div>
+{% endblock %}

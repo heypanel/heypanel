@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\System\Language\LanguageDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\Channel\ChannelLanguageDefinition">
+            <tag name="heypanel.channel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\Channel\LanguageRoute" public="true">
+            <argument type="service" id="channel.language.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\LanguageValidator">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\LanguageLoader">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\ChannelLanguageLoader">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\CachedLanguageLoader" decorates="HeyPanel\Core\System\Language\LanguageLoader">
+            <argument type="service" id="HeyPanel\Core\System\Language\CachedLanguageLoader.inner"/>
+            <argument type="service" id="cache.object"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\TranslationValidator">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Language\LanguageExceptionHandler">
+            <tag name="heypanel.dal.exception_handler"/>
+        </service>
+
+    </services>
+</container>

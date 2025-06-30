@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\Content\Media\Core\Application\MediaUrlLoader">
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\AbstractMediaUrlGenerator"/>
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\RemoteThumbnailLoader"/>
+            <argument>%heypanel.media.remote_thumbnails.enable%</argument>
+
+            <tag name="kernel.event_listener" event="media.loaded" method="loaded" priority="20" />
+            <tag name="kernel.event_listener" event="media.partial_loaded" method="loaded" priority="19" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Application\RemoteThumbnailLoader">
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\AbstractMediaUrlGenerator"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="heypanel.filesystem.public"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Extensions\ExtensionDispatcher"/>
+            <argument>%heypanel.media.remote_thumbnails.pattern%</argument>
+
+            <tag name="kernel.reset" method="reset"/>
+        </service>
+
+        <service class="HeyPanel\Core\Content\Media\Infrastructure\Path\SqlMediaLocationBuilder" id="HeyPanel\Core\Content\Media\Core\Application\MediaLocationBuilder">
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Application\MediaPathUpdater">
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\AbstractMediaPathStrategy"/>
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\MediaLocationBuilder"/>
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\MediaPathStorage"/>
+
+            <tag name="kernel.event_listener" event="HeyPanel\Core\Content\Media\Core\Event\UpdateMediaPathEvent" method="updateMedia" priority="0" />
+            <tag name="kernel.event_listener" event="HeyPanel\Core\Content\Media\Core\Event\UpdateThumbnailPathEvent" method="updateThumbnails" priority="0" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Application\MediaPathStorage" class="HeyPanel\Core\Content\Media\Infrastructure\Path\SqlMediaPathStorage">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Strategy\PathStrategyFactory">
+            <argument type="tagged_iterator" tag="heypanel.path.strategy"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Strategy\FilenamePathStrategy">
+            <tag name="heypanel.path.strategy" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Strategy\IdPathStrategy">
+            <tag name="heypanel.path.strategy" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Strategy\PhysicalFilenamePathStrategy">
+            <tag name="heypanel.path.strategy" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Strategy\PlainPathStrategy">
+            <tag name="heypanel.path.strategy" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Application\AbstractMediaUrlGenerator" class="HeyPanel\Core\Content\Media\Infrastructure\Path\MediaUrlGenerator">
+            <argument type="service" id="heypanel.filesystem.public"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Core\Application\AbstractMediaPathStrategy">
+            <factory service="HeyPanel\Core\Content\Media\Core\Strategy\PathStrategyFactory" method="factory"/>
+            <argument>%heypanel.cdn.strategy%</argument>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Infrastructure\Path\MediaPathPostUpdater">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Dbal\Common\IteratorFactory"/>
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\MediaPathUpdater"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry"/>
+            <tag name="heypanel.entity_indexer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Media\Infrastructure\Command\UpdatePathCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="HeyPanel\Core\Content\Media\Core\Application\MediaPathUpdater"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+    </services>
+</container>

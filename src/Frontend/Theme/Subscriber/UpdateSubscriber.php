@@ -1,0 +1,94 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Frontend\Theme\Subscriber;
+
+use HeyPanel\Core\Framework\DataAbstractionLayer\EntityRepository;
+use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use HeyPanel\Core\Framework\Plugin\PluginLifecycleService;
+use HeyPanel\Core\Framework\Update\Event\UpdatePostFinishEvent;
+use HeyPanel\Core\System\Channel\ChannelCollection;
+use HeyPanel\Frontend\Theme\Exception\ThemeCompileException;
+use HeyPanel\Frontend\Theme\ThemeCollection;
+use HeyPanel\Frontend\Theme\ThemeLifecycleService;
+use HeyPanel\Frontend\Theme\ThemeService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+/**
+ * @internal
+ */
+class UpdateSubscriber implements EventSubscriberInterface
+{
+    /**
+     * @internal
+     *
+     * @param EntityRepository<ChannelCollection> $channelRepository
+     */
+    public function __construct(
+        private readonly ThemeService $themeService,
+        private readonly ThemeLifecycleService $themeLifecycleService,
+        private readonly EntityRepository $channelRepository
+    ) {
+    }
+
+    /**
+     * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            UpdatePostFinishEvent::class => 'updateFinished',
+        ];
+    }
+
+    /**
+     * @internal
+     */
+    public function updateFinished(UpdatePostFinishEvent $event): void
+    {
+        $context = $event->getContext();
+
+        if ($context->hasState(PluginLifecycleService::STATE_SKIP_ASSET_BUILDING)) {
+            return;
+        }
+
+        $this->themeLifecycleService->refreshThemes($context);
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('active', true));
+        $criteria->getAssociation('themes')
+            ->addFilter(new EqualsFilter('active', true));
+
+        $alreadyCompiled = [];
+
+        $channels = $this->channelRepository->search($criteria, $context)->getEntities();
+
+        foreach ($channels as $channel) {
+            $themes = $channel->getExtensionOfType('themes', ThemeCollection::class);
+            if (!$themes) {
+                continue;
+            }
+
+            $failedThemes = [];
+
+            foreach ($themes as $theme) {
+                // @codeCoverageIgnoreStart -this is covered randomly
+                if (\in_array($theme->getId(), $alreadyCompiled, true) !== false) {
+                    continue;
+                }
+                // @codeCoverageIgnoreEnd
+
+                try {
+                    $alreadyCompiled += $this->themeService->compileThemeById($theme->getId(), $context);
+                } catch (ThemeCompileException $e) {
+                    $failedThemes[] = $theme->getName();
+                    $alreadyCompiled[] = $theme->getId();
+                }
+            }
+
+            if (!empty($failedThemes)) {
+                $event->appendPostUpdateMessage('Theme(s): ' . implode(', ', $failedThemes) . ' could not be recompiled.');
+            }
+        }
+    }
+}

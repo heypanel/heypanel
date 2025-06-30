@@ -1,0 +1,20 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Framework\DataAbstractionLayer\Field;
+
+use HeyPanel\Core\Framework\DataAbstractionLayer\FieldSerializer\VariantListingConfigFieldSerializer;
+
+class VariantListingConfigField extends JsonField
+{
+    public function __construct(
+        string $storageName,
+        string $propertyName
+    ) {
+        parent::__construct($storageName, $propertyName);
+    }
+
+    protected function getSerializerClass(): string
+    {
+        return VariantListingConfigFieldSerializer::class;
+    }
+}

@@ -1,0 +1,115 @@
+includes:
+    - phpstan-baseline.neon
+    - src/Core/DevOps/StaticAnalyze/PHPStan/common.neon
+    - src/Core/DevOps/StaticAnalyze/PHPStan/core-rules.neon
+
+parameters:
+    tmpDir: var/cache/phpstan
+    paths:
+        - src
+        - tests
+
+    bootstrapFiles:
+        - src/Core/DevOps/StaticAnalyze/phpstan-bootstrap.php
+    # run `php src/Core/DevOps/StaticAnalyze/phpstan-bootstrap.php` to create the container
+    symfony:
+        constantHassers: false
+        containerXmlPath: 'var/cache/static_phpstan_dev/HeyPanel_Core_DevOps_StaticAnalyze_StaticAnalyzeKernelPhpstan_devDebugContainer.xml'
+        consoleApplicationLoader: src/Core/DevOps/StaticAnalyze/console-application.php
+
+    excludePaths:
+        # vendor patches over autoload files
+        - src/Core/Framework/Adapter/Doctrine/Patch/AbstractAsset.php
+
+        # node_modules
+        - src/**/node_modules/*
+        - tests/**/node_modules/*
+
+        # PHPStan rule test files
+        - tests/devops/Core/DevOps/StaticAnalyse/PHPStan/Rules/data/*
+
+    universalObjectCratesClasses:
+        - HeyPanel\Core\Content\Product\Hook\Pricing\ProductProxy
+
+    ignoreErrors:
+
+        # To fix this error, the \HeyPanel\Core\Framework\Struct\Collection::createNew method has to be implemented
+        # in every implementation of `Collection` and needs to return `new self` instead of `new static`. See https://github.com/phpstan/phpstan/issues/2773
+        -
+            message: '#Unsafe usage of new static\(\)#'
+            paths:
+                - src/Core/Framework/Struct/Collection.php
+                - src/Core/Framework/DataAbstractionLayer/CompiledFieldCollection.php
+
+        # Route scopes for controllers
+        -
+           message: '#.* has no route scope defined.*#'
+           paths:
+            - src/Core/Installer
+
+        -
+           message: '#No global Command directories allowed, put your commands in the right domain directory#'
+           path: src/Administration/
+
+        # dynamic hydrator performance
+        -
+            message: '#Access to an undefined property HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Entity#'
+            path: src/*/*Hydrator.php
+
+        -
+            message: '#Access to protected property *#'
+            path: src/*/*Hydrator.php
+
+        # Internal deprecations of HeyPanel are handled in other places
+        - '#deprecated.*(class|interface) HeyPanel\\#'
+
+        # DefaultsTest explicitly tests that the default values are not changed
+        - identifier: staticMethod.alreadyNarrowedType
+          path: tests/devops/Core/DefaultsTest.php
+
+        - # Classes that are allowed to use dynamic property name access
+            message: '#Use explicit names over dynamic ones#'
+            paths:
+                - src/Core/Framework/Struct/AssignArrayTrait.php
+                - src/Core/Framework/Struct/CloneTrait.php
+                - src/Core/Framework/Struct/CreateFromTrait.php
+                - src/Core/Framework/DataAbstractionLayer/Dbal/EntityHydrator.php
+                - src/Core/Framework/DataAbstractionLayer/Entity.php
+                - src/Core/Framework/DataAbstractionLayer/Util/AfterSort.php
+
+        - # Can not be fixed currently. See https://github.com/phpstan/phpstan/discussions/9159
+            message: '#Method HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Field\\Field::getFlag\(\) should return \(TFlag of HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Field\\Flag\\Flag\)\|null but returns HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Field\\Flag\\Flag\|null#'
+            path: src/Core/Framework/DataAbstractionLayer/Field/Field.php
+            count: 1
+
+        - # WIP implementation (See NEXT-29041 - https://github.com/heypanel/heypanel/issues/6175)
+            message: '#.* generic class HeyPanel\\Core\\Framework\\DataAbstractionLayer\\EntityRepository.*not specify its types: TEntityCollection#'
+            paths:
+                - src/Core/Content/**
+                - src/Core/Framework/**
+                - src/Core/System/**
+
+
+        - # Needs a proper class-string annotation in `\HeyPanel\Core\Framework\DataAbstractionLayer\EntityDefinition::getCollectionClass` and all child classes
+            message: '#PHPDoc tag @var with type .*HeyPanel\\Core\\Framework\\DataAbstractionLayer\\EntityCollection.* is not subtype of native type string#'
+            paths:
+                - src/Core/Framework/DataAbstractionLayer/Dbal/EntityReader.php
+                - src/Core/Framework/DataAbstractionLayer/EntityRepository.php
+
+        - # It is not possible to specify the type of the EntityResult, as the Aggregators are used for multiple entities at the same time
+            message: '#Method HeyPanel\\.*::hydrateEntityAggregation\(\) return type with generic class HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Search\\AggregationResult\\Metric\\EntityResult does not specify its types: TEntityCollection#'
+            paths:
+                - src/Core/Framework/DataAbstractionLayer/Dbal/EntityAggregator.php
+
+        - # It is checked before if the entity supports custom fields, but it is not possible for PHPStan to recognize this
+            message: '#Call to an undefined method TElement of HeyPanel\\Core\\Framework\\DataAbstractionLayer\\Entity::.*CustomFields.*\(\)#'
+            count: 4
+            path: src/Core/Framework/DataAbstractionLayer/EntityCollection.php
+        -
+            message: '#Service ".*" is not registered in the container\.#'
+            paths:
+                - src/Core/Framework/Test/TestCaseBase/*.php
+        -
+            message: '#Service ".*" is private#'
+            paths:
+                - tests/integration/**/*Test.php

@@ -1,0 +1,340 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\Framework\Api\Controller\FallbackController" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+       <service id="HeyPanel\Core\Framework\Api\EventListener\ResponseExceptionListener">
+            <tag name="kernel.event_subscriber"/>
+            <argument>%kernel.debug%</argument>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\EventListener\ResponseHeaderListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\EventListener\CorsListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+       <service id="HeyPanel\Core\Framework\Routing\RequestTransformerInterface"
+         class="HeyPanel\Core\Framework\Routing\RequestTransformer"
+         public="true"/>
+
+        <service id="HeyPanel\Core\Framework\Validation\DataValidator">
+            <argument type="service" id="validator"/>
+        </service>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory">
+            <argument type="service" id="Nyholm\Psr7\Factory\Psr17Factory"/>
+            <argument type="service" id="Nyholm\Psr7\Factory\Psr17Factory"/>
+            <argument type="service" id="Nyholm\Psr7\Factory\Psr17Factory"/>
+            <argument type="service" id="Nyholm\Psr7\Factory\Psr17Factory"/>
+        </service>
+
+        <service id="Nyholm\Psr7\Factory\Psr17Factory"/>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\AccessKeyController" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\ApiController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="serializer"/>
+            <argument type="service" id="api.request_criteria_builder"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\EntityProtection\EntityProtectionValidator"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Acl\AclCriteriaValidator"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Context\ContextValueResolver">
+            <tag name="controller.argument_value_resolver" priority="1000"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\SyncController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Sync\SyncService"/>
+            <argument type="service" id="serializer"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\UserController" public="true">
+            <argument type="service" id="user.repository"/>
+            <argument type="service" id="acl_user_role.repository"/>
+            <argument type="service" id="acl_role.repository"/>
+            <argument type="service" id="user_access_key.repository"/>
+            <argument type="service" id="HeyPanel\Core\System\User\UserDefinition"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\CacheController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheClearer"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator"/>
+            <argument type="service" id="cache.object"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry"/>
+            <tag name="container.service_subscriber" />
+            <tag name="controller.service_arguments" />
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\AuthController" public="true">
+            <argument type="service" id="heypanel.api.authorization_server"/>
+            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory"/>
+            <argument type="service" id="heypanel.rate_limiter"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Route\ApiRouteLoader">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <tag name="routing.loader"/>
+        </service>
+
+        <!-- API OAuth Repositories -->
+        <service id="HeyPanel\Core\Framework\Api\OAuth\AccessTokenRepository"/>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\ClientRepository">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\RefreshTokenRepository">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\ScopeRepository">
+            <argument type="tagged_iterator" tag="heypanel.oauth.scope"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\UserRepository">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <!-- Scopes -->
+        <service id="HeyPanel\Core\Framework\Api\OAuth\Scope\WriteScope">
+            <tag name="heypanel.oauth.scope"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\Scope\AdminScope">
+            <tag name="heypanel.oauth.scope"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\Scope\UserVerifiedScope">
+            <tag name="heypanel.oauth.scope"/>
+        </service>
+
+        <!-- API -->
+        <service id="heypanel.jwt_config" class="Lcobucci\JWT\Configuration">
+            <factory class="HeyPanel\Core\Framework\Api\OAuth\JWTConfigurationFactory"
+                     method="createJWTConfiguration"/>
+        </service>
+
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\FakeCryptKey">
+            <argument type="service" id="heypanel.jwt_config"/>
+        </service>
+
+        <service class="League\OAuth2\Server\AuthorizationServer" id="heypanel.api.authorization_server">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\ClientRepository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\AccessTokenRepository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\ScopeRepository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\FakeCryptKey"/>
+            <argument>%env(APP_SECRET)%</argument>
+        </service>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
+
+        <service id="HeyPanel\Core\Framework\Api\OAuth\SymfonyBearerTokenValidator">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\AccessTokenRepository"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="heypanel.jwt_config"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\EventListener\Authentication\UserCredentialsChangedSubscriber">
+            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\RefreshTokenRepository"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\IntegrationController" public="true">
+            <argument type="service" id="integration.repository"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Route\ApiRouteInfoResolver">
+            <argument type="service" id="router.default"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\FeatureFlagController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\Feature\FeatureFlagRegistry"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheClearer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\EventListener\Authentication\ApiAuthenticationListener">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\SymfonyBearerTokenValidator"/>
+            <argument type="service" id="heypanel.api.authorization_server"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\UserRepository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\OAuth\RefreshTokenRepository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Routing\RouteScopeRegistry"/>
+            <argument type="string">%heypanel.api.access_token_ttl%</argument>
+            <argument type="string">%heypanel.api.refresh_token_ttl%</argument>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <!-- Serializer -->
+        <service id="HeyPanel\Core\Framework\Api\Serializer\JsonApiDecoder">
+            <tag name="serializer.encoder"/>
+        </service>
+
+        <!-- Response types -->
+        <service id="HeyPanel\Core\Framework\Api\Response\ResponseFactoryRegistry">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Response\Type\Api\JsonApiType"/>
+            <!-- deactivated, the current channel api design does not match the json api requirements -->
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Response\Type\Api\JsonType"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Response\Type\Api\JsonApiType">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Serializer\JsonApiEncoder"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Api\StructEncoder"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Response\ResponseFactoryInterfaceValueResolver">
+            <tag name="controller.argument_value_resolver" priority="50"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Response\ResponseFactoryRegistry"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Response\Type\Api\JsonType">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Serializer\JsonEntityEncoder"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Api\StructEncoder"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Serializer\JsonApiEncoder"/>
+
+        <service id="HeyPanel\Core\Framework\Api\Serializer\JsonEntityEncoder">
+            <argument type="service" id="serializer"/>
+        </service>
+
+        <!-- API Docs -->
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\DefinitionService">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Entity\ChannelDefinitionInstanceRegistry"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\ClientApiGenerator"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi3Generator"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\EntitySchemaGenerator"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiDefinitionSchemaBuilder"/>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiPathBuilder"/>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiSchemaBuilder">
+            <argument>%kernel.heypanel_version%</argument>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\BundleSchemaPathCollection">
+            <argument type="service" id="kernel.bundles"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi3Generator">
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiSchemaBuilder"/>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiPathBuilder"/>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiDefinitionSchemaBuilder"/>
+            <argument>%kernel.bundles_metadata%</argument>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\BundleSchemaPathCollection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\ClientApiGenerator">
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiSchemaBuilder"/>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\OpenApi\OpenApiDefinitionSchemaBuilder"/>
+            <argument>%kernel.bundles_metadata%</argument>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\BundleSchemaPathCollection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\EntitySchemaGenerator">
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\CachedEntitySchemaGenerator"
+                 decorates="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\EntitySchemaGenerator">
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Api\ApiDefinition\Generator\CachedEntitySchemaGenerator.inner"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+        <service id="HeyPanel\Core\Framework\Api\Controller\InfoController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\ApiDefinition\DefinitionService"/>
+            <argument type="service" id="parameter_bag"/>
+            <argument type="service" id="kernel"/>
+            <argument type="service" id="heypanel.increment.gateway.registry"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\Maintenance\System\Service\AppUrlVerifier"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Api\Route\ApiRouteInfoResolver"/>
+            <argument type="service" id="HeyPanel\Administration\Framework\Twig\ViteFileAccessorDecorator" on-invalid="null"/>
+            <argument type="service" id="filesystem"/>
+            <argument type="service" id="HeyPanel\Core\Framework\MessageQueue\Stats\StatsService"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+        <service id="HeyPanel\Core\Framework\Api\Controller\HealthCheckController" public="true">
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="HeyPanel\Core\Framework\SystemCheck\SystemChecker"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Api\Controller\IndexingController" public="true">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+        
+       <service id="HeyPanel\Core\Framework\Api\Command\DumpSchemaCommand">
+            <argument type="service" id="HeyPanel\Core\Framework\Api\ApiDefinition\DefinitionService"/>
+            <argument type="service" id="cache.object"/>
+
+            <tag name="console.command"/>
+        </service>
+        
+        <service id="HeyPanel\Core\Framework\Api\Command\DumpClassSchemaCommand">
+            <tag name="console.command"/>
+            <argument>%kernel.bundles_metadata%</argument>
+        </service>
+        
+        <service id="HeyPanel\Core\Framework\Api\Command\CreateIntegrationCommand">
+            <tag name="console.command"/>
+
+            <argument type="service" id="integration.repository"/>
+        </service>
+        <!-- Events -->
+        <service id="HeyPanel\Core\Framework\Api\EventListener\JsonRequestTransformerListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+    </services>
+</container>

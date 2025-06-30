@@ -1,0 +1,21 @@
+rules:
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Tests\PHPUnitClassAttributesOverAnnotationsRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Tests\PHPUnitMethodAttributesOverAnnotationsRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\ScheduledTaskTooLowIntervalRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\RuleAreasFlagNotAllowedRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\RuleConditionHasRuleConfigRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Tests\NoAssertsOnObjectsRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoFlowEventAwareExtendsRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoFlowStoreFunctionRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoEnvironmentHelperInsideCompilerPassRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoSuperGlobalsInsideCompilerPassRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoDALAutoload
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\DALFieldsMustBeRegisteredWithSchemaBuilder
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\RouteScopeRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\MessagesShouldNotUsePHPStanTypes
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\UseCLIContextRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoUnconfiguredMetricAllowed
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\UseHasherRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\PropertyNativeTypeRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoManualChannelContextCreationRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoDelayStampRule

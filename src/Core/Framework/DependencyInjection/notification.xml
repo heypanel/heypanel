@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="HeyPanel\Core\Framework\Notification\NotificationBulkEntityExtension">
+            <tag name="heypanel.bulk.entity.extension"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Notification\NotificationService" public="true">
+            <argument type="service" id="notification.repository"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Notification\NotificationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Notification\Api\NotificationController" public="true">
+            <argument type="service" id="heypanel.rate_limiter"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Notification\NotificationService"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+    </services>
+</container>

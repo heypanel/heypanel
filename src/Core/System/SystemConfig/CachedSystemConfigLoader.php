@@ -1,0 +1,41 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\System\SystemConfig;
+
+use HeyPanel\Core\Framework\Adapter\Cache\CacheValueCompressor;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+
+class CachedSystemConfigLoader extends AbstractSystemConfigLoader
+{
+    final public const CACHE_TAG = 'system-config';
+
+    /**
+     * @internal
+     */
+    public function __construct(
+        private readonly AbstractSystemConfigLoader $decorated,
+        private readonly CacheInterface $cache
+    ) {
+    }
+
+    public function getDecorated(): AbstractSystemConfigLoader
+    {
+        return $this->decorated;
+    }
+
+    public function load(?string $channelId): array
+    {
+        $key = 'system-config-' . $channelId;
+
+        $value = $this->cache->get($key, function (ItemInterface $item) use ($channelId) {
+            $config = $this->getDecorated()->load($channelId);
+
+            $item->tag([self::CACHE_TAG]);
+
+            return CacheValueCompressor::compress($config);
+        });
+
+        return CacheValueCompressor::uncompress($value);
+    }
+}

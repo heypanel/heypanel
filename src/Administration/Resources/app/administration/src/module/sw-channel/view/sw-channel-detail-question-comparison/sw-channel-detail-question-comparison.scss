@@ -1,0 +1,11 @@
+.sw-channel-detail-question-comparison {
+    &__button-group {
+        display: flex;
+    }
+
+    &__button {
+        + .sw-channel-detail-question-comparison__button {
+            margin-left: 8px;
+        }
+    }
+}

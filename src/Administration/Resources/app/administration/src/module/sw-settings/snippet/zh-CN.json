@@ -1,0 +1,32 @@
+{
+  "sw-settings": {
+    "general": {
+      "mainMenuItemGeneral": "设置"
+    },
+    "index": {
+      "title": "设置",
+      "tabShop": "Shop",
+      "tabSystem": "系统",
+      "tabGeneral": "常规",
+      "tabLocalization": "本地化",
+      "tabCustomer": "客户",
+      "tabCommerce": "Commerce",
+      "tabContent": "内容",
+      "tabAutomation": "自动化",
+      "tabPlugins": "插件"
+    },
+    "system-config": {
+      "labelChannelSelect": "Channel",
+      "inherited": "Inherited",
+      "compileNotice": "This configuration holds fields that can be used in a theme. Please compile the theme for these changes to be visible.",
+      "scssHelpText": "SCSS variable name: "
+    }
+  },
+  "sw-privileges": {
+    "additional_permissions": {
+      "system": {
+        "system_config": "系统基础配置"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<?php declare(strict_types=1);
+
+namespace {{ namespace }}\Core\Content\Example\Channel;
+
+use HeyPanel\Core\Content\Product\ProductCollection;
+use HeyPanel\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
+use HeyPanel\Core\System\Channel\ClientApiResponse;
+
+/**
+ * @property EntitySearchResult $object
+ */
+class ExampleRouteResponse extends ClientApiResponse
+{
+    public function getExamples(): ProductCollection
+    {
+        /** @var ProductCollection $collection */
+        $collection = $this->object->getEntities();
+
+        return $collection;
+    }
+}

@@ -1,0 +1,20 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+.sw-media-quickinfo-metadata-item__term {
+    font-size: var(--font-size-xs);
+    line-height: var(--font-line-height-xs);
+    color: var(--color-text-primary-default);
+}
+
+.sw-media-quickinfo-metadata-item__description {
+    @include truncate;
+
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
+    color: var(--color-text-primary-default);
+
+    @media screen and (max-width: 768px) {
+        margin-bottom: 16px;
+    }
+}

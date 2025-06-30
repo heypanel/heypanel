@@ -1,0 +1,38 @@
+"{{ question.questionNumber }}",{#- -#}
+"{{ question.manufacturer.translated.name ?? '' }}",{#- -#}
+"{{ question.manufacturerNumber }}",{#- -#}
+"{{ question.ean }}",{#- -#}
+"{{ question.translated.name|length > 80 ? question.translated.name|slice(0, 80) ~ '...' : question.translated.name }}",{#- -#}
+"{{ question.translated.description|raw|length > 900 ? question.translated.description|raw|slice(0,900) ~ '...' : question.translated.description|raw }}{#- -#}
+",{#- -#}
+"{%- if question.categories.count > 0 -%}
+    {{ question.categories.first.getBreadCrumb|slice(1)|join(' > ')|raw }}{#- -#}
+{%- endif -%}",{#- -#}
+{% set price = question.calculatedPrice %}
+{%- if question.calculatedPrices.count > 0 -%}
+    {% set price = question.calculatedPrices.last %}
+{%- endif -%}
+"{{ price.unitPrice }}",{#- -#}
+"{%- if price.referencePrice is not null -%}
+    {{ price.referencePrice.price|currency }} / {{ price.referencePrice.referenceUnit }} {{ price.referencePrice.unitName }}{#- -#}
+{%- endif -%}",{#- -#}
+"{{ seoUrl('frontend.detail.page', {'questionId': question.id}) }}",{#- -#}
+"{% if question.cover is not null %}{{ question.cover.media.url }}{% endif %}",{#- -#}
+"{%- if question.availableStock >= question.minPurchase and question.deliveryTime -%}
+    {{ "detail.deliveryTimeAvailable"|trans({'%name%': question.deliveryTime.translation('name')}) }}{#- -#}
+{%- elseif question.availableStock < question.minPurchase and question.deliveryTime and question.restockTime -%}
+    {{ "detail.deliveryTimeRestock"|trans({'%count%': question.restockTime,'%restockTime%': question.restockTime,'%name%': question.deliveryTime.translation('name')}) }}{#- -#}
+{%- else -%}
+    {{ "detail.soldOut"|trans }}{#- -#}
+{%- endif -%}",{#- -#}
+"4.95",{# change your default delivery costs #}{#- -#}
+,{#- -#}
+"{% if question.purchaseUnit and question.unit %}{{ question.purchaseUnit }} {{ question.unit.shortCode }}{% endif %}",{#- -#}
+"{% if question.referenceUnit and question.unit %}{{ question.referenceUnit }} {{ question.unit.shortCode }}{% endif %}",{#- -#}
+"{{ seoUrl('frontend.detail.page', {'questionId': question.id}) }}",{#- -#}
+{%- if question.media|length > 1 -%}
+    "{%- for mediaAssociation in question.media|slice(0, 5) -%}
+        {{ mediaAssociation.media.url }}
+        {%- if not loop.last -%},{%- endif -%}
+    {%- endfor -%}"
+{%- endif -%}{#- -#}

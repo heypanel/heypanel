@@ -1,0 +1,206 @@
+parameters:
+    default_cdn_strategy: "id"
+    env(APP_URL): ''
+    APP_URL: "%env(string:APP_URL)%"
+    env(REDIS_PREFIX): ''
+
+heypanel:
+
+    twig:
+        allowed_php_functions: []
+
+    sitemap:
+        batchsize: 100
+        custom_urls:
+        excluded_urls:
+        scheduled_task:
+            enabled: true
+    mail:
+        update_mail_variables_on_send: true
+        max_body_length: 0
+
+    increment:
+        user_activity:
+            type: 'mysql'
+
+            # type: 'array'
+
+            # type: 'redis'
+            #     config:
+            #         url: 'redis://localhost'
+
+        message_queue:
+            type: 'mysql'
+
+            # type: 'array'
+
+            # type: 'redis'
+            #     config:
+            #         url: 'redis://localhost'
+    filesystem:
+        private:
+            type: "local"
+            config:
+                root: "%kernel.project_dir%/files"
+        public:
+            type: "local"
+            config:
+                root: "%kernel.project_dir%/public"
+        temp:
+            type: "local"
+            config:
+                root: "%kernel.project_dir%/var"
+        asset:
+        theme:
+        allowed_extensions: ["jpg", "jpeg", "png", "webp", "avif", "gif", "svg", "bmp", "tiff", "tif", "eps", "webm", "mkv", "flv", "ogv", "ogg", "mov", "mp4", "avi", "wmv", "pdf", "aac", "mp3", "wav", "flac", "oga", "wma", "txt", "doc", "ico", "glb", "csv", "xls", "xlsx", "html"]
+        private_allowed_extensions: [ "jpg", "jpeg", "png", "webp", "avif", "gif", "svg", "bmp", "tiff", "tif", "eps", "webm", "mkv", "flv", "ogv", "ogg", "mov", "mp4", "avi", "wmv", "pdf", "aac", "mp3", "wav", "flac", "oga", "wma", "txt", "doc", "ico", "glb", "zip", "rar", "csv", "xls", "xlsx", "html", "xml" ]
+        private_local_download_strategy: "php"
+        private_local_path_prefix: ""
+
+    number_range:
+        # supported types: mysql, redis
+        increment_storage: "mysql"
+        # config:
+            # dsn: 'redis://localhost'
+
+    channel_context:
+        expire_days: 120
+
+    admin_worker:
+        enable_admin_worker: true
+        enable_queue_stats_worker: true
+        enable_notification_worker: true
+        # This has to be lower than PHP's max_execution_time (default: 30s)
+        poll_interval: 20
+        transports: ["async", "low_priority"]
+
+    media:
+        enable_url_upload_feature: true
+        enable_url_validation: true
+        url_upload_max_size: 0
+        remote_thumbnails:
+            enable: false
+            pattern: '{mediaUrl}/{mediaPath}?width={width}&ts={mediaUpdatedAt}'
+
+    auto_update:
+        enabled: true
+
+    store:
+        frw: false
+
+    deployment:
+        blue_green: '%env(bool:default:defaults_bool_true:BLUE_GREEN_DEPLOYMENT)%'
+        cluster_setup: false
+
+    html_sanitizer:
+        enabled: true
+        cache_dir: '%kernel.cache_dir%'
+        cache_enabled: true
+        sets:
+            - name: HTML5
+              tags: [ "article", "aside", "audio", "bdi", "canvas", "datalist", "details", "dialog", "embed", "figcaption", "figure", "footer", "header", "main", "mark", "meter", "nav", "progress", "rp", "rt", "ruby", "section", "summary", "time", "wbr", "output", "canvas", "svg", "track", "video", "source", "input" ]
+              attributes: [ "controls", "open", "min", "max", "datetime", "for", "type", "kind", "srclang", "label", "value", "placeholder", "autoplay", "loop", "muted", "preload", "low", "high", "optimum", "default", "poster", "media", "maxlength", "minlength", "pattern", "required", "autocomplete", "autofocus", "disabled", "readonly", "multiple", "formaction", "formenctype", "formmethod", "formnovalidate", "formtarget", "list", "step", "checked", "accept" ]
+            - name: basic
+              tags: [ "a", "abbr", "acronym", "address", "b", "bdo", "big", "blockquote", "br", "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "ins", "kbd", "li", "menu", "ol", "p", "pre", "q", "s", "samp", "small", "span", "strike", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "tt", "u", "ul", "var", "img" ]
+              attributes: [ "align", "bgcolor", "border", "cellpadding", "cellspacing", "cite", "class", "clear", "color", "colspan", "dir", "face", "frame", "height", "href", "id", "lang", "name", "noshade", "nowrap", "rel", "rev", "rowspan", "scope", "size", "span", "start", "style", "summary", "title", "type", "valign", "value", "width", "target", "src", "alt" ]
+              options:
+                  - key: Attr.AllowedFrameTargets
+                    values: [ '_blank', '_self', '_parent', '_top' ]
+                  - key: Attr.AllowedRel
+                    values: [ 'nofollow', 'print' ]
+                  - key: Attr.EnableID
+                    value: true
+    api:
+        max_limit: 500
+        api_browser:
+            auth_required: true
+        store:
+            context_lifetime: 'P1D' # 1 day interval, see also https://www.php.net/manual/en/dateinterval.construct.php#refsect1-dateinterval.construct-parameters
+            max_limit: 100
+        rate_limiter:
+            login:
+                enabled: true
+                policy: 'time_backoff'
+                reset: '24 hours' # reset limit after this time if no more requests failed
+                limits:
+                    - limit: 10
+                      interval: '10 seconds'
+                    - limit: 15
+                      interval: '30 seconds'
+                    - limit: 20
+                      interval: '60 seconds'
+            reset_password:
+                enabled: true
+                policy: 'time_backoff'
+                reset: '24 hours'
+                limits:
+                    - limit: 3
+                      interval: '30 seconds'
+                    - limit: 5
+                      interval: '60 seconds'
+                    - limit: 10
+                      interval: '90 seconds'
+            user_recovery:
+                enabled: true
+                policy: 'time_backoff'
+                reset: '24 hours'
+                limits:
+                    - limit: 3
+                      interval: '30 seconds'
+                    - limit: 5
+                      interval: '60 seconds'
+                    - limit: 10
+                      interval: '90 seconds'
+            oauth:
+                enabled: true
+                policy: 'time_backoff'
+                reset: '24 hours'
+                limits:
+                    - limit: 10
+                      interval: '10 seconds'
+                    - limit: 15
+                      interval: '30 seconds'
+                    - limit: 20
+                      interval: '60 seconds'
+    cdn:
+        url: ''
+        strategy: "%env(string:default:default_cdn_strategy:HEYADMIN_CDN_STRATEGY_DEFAULT)%"
+        fastly:
+            api_key: ''
+            soft_purge: false
+            max_parallel_invalidations: 2
+
+    dal:
+        batch_size: 125
+        max_rule_prices: 100
+        versioning:
+            expire_days: 30
+
+    cache:
+        redis_prefix: '%env(REDIS_PREFIX)%'
+        invalidation:
+            delay_options:
+                storage: mysql
+            http_cache: []
+
+    search:
+        term_max_length: 300
+        # special chars that will not be removed on tokenizing
+        preserved_chars: ['-', '_', '+', '.', '@']
+
+    system_config:
+        default: []
+
+    messenger:
+        routing_overwrite:
+        stats:
+
+    profiler:
+        integrations: []
+
+    feature_toggle:
+        enable: true
+
+    logger:
+        enforce_throw_exception: '%env(bool:default:defaults_bool_false:LOGGER_ENFORCE_THROW_EXCEPTION)%'
+        file_rotation_count: 14

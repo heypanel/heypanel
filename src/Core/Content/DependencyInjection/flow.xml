@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\Content\Flow\FlowDefinition">
+            <tag name="heypanel.entity.definition" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Aggregate\FlowSequence\FlowSequenceDefinition">
+            <tag name="heypanel.entity.definition" />
+        </service>
+         <service id="HeyPanel\Core\Content\Flow\Dispatching\FlowExecutor" public="true">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Extensions\ExtensionDispatcher"/>
+            <argument type="service" id="logger"/>
+            <argument type="tagged_iterator" tag="flow.action" index-by="key" />
+        </service>
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\FlowDispatcher" decorates="event_dispatcher" decoration-priority="1000">
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\FlowDispatcher.inner"/>
+            <argument type="service_locator">
+                <argument type="service" key="logger" id="logger"/>
+                <argument type="service" key="Doctrine\DBAL\Connection" id="Doctrine\DBAL\Connection"/>
+                <argument type="service" key="HeyPanel\Core\Content\Flow\Dispatching\FlowFactory" id="HeyPanel\Core\Content\Flow\Dispatching\FlowFactory"/>
+                <argument type="service" key="HeyPanel\Core\Content\Flow\Dispatching\FlowExecutor" id="HeyPanel\Core\Content\Flow\Dispatching\FlowExecutor"/>
+                <argument type="service" key="HeyPanel\Core\Content\Flow\Dispatching\FlowLoader" id="HeyPanel\Core\Content\Flow\Dispatching\FlowLoader"/>
+                <argument type="service" key="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowQueue" id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowQueue"/>
+            </argument>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowQueue" />
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowExecutor">
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowQueue"/>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\FlowLoader"/>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\FlowFactory"/>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\FlowExecutor"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowExecutionTriggersListener">
+            <argument type="service_locator">
+                <argument type="service" key="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowExecutor" id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowExecutor"/>
+            </argument>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\BufferedFlowQueue"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        
+        
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\Action\StopFlowAction">
+            <tag name="flow.action" priority="1" key="action.stop.flow" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Api\FlowActionCollector">
+            <argument type="tagged_iterator" tag="flow.action" />
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\FlowLoader" public="true">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\CachedFlowLoader" decorates="HeyPanel\Core\Content\Flow\Dispatching\FlowLoader" decoration-priority="-1000" public="true">
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\CachedFlowLoader.inner"/>
+            <argument type="service" id="cache.object"/>
+
+            <tag name="kernel.event_subscriber" />
+            <tag name="kernel.reset" method="reset"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Indexing\FlowPayloadUpdater">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Dispatching\FlowBuilder"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Indexing\FlowIndexer">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Dbal\Common\IteratorFactory"/>
+            <argument type="service" id="flow.repository"/>
+            <argument type="service" id="HeyPanel\Core\Content\Flow\Indexing\FlowPayloadUpdater"/>
+            <argument type="service" id="event_dispatcher"/>
+
+            <tag name="heypanel.entity_indexer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Indexing\FlowIndexerSubscriber">
+            <argument type="service" id="messenger.default_bus"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\FlowBuilder"/>
+
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\Storer\UserStorer">
+            <argument type="service" id="user_recovery.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+
+            <tag name="flow.storer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\Storer\ScalarValuesStorer">
+            <tag name="flow.storer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\Storer\LanguageStorer">
+            <tag name="flow.storer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Dispatching\FlowFactory" public="true">
+            <argument type="tagged_iterator" tag="flow.storer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\Aggregate\FlowTemplate\FlowTemplateDefinition">
+            <tag name="heypanel.entity.definition" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Flow\DataAbstractionLayer\FieldSerializer\FlowTemplateConfigFieldSerializer">
+            <argument type="service" id="validator" />
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry" />
+            <tag name="heypanel.field_serializer"/>
+        </service>
+
+    </services>
+</container>

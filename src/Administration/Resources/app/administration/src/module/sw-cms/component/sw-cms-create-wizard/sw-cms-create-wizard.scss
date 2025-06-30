@@ -1,0 +1,167 @@
+@import "~scss/variables";
+
+.sw-cms-create-wizard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--scale-size-32);
+
+    .sw-cms-create-wizard-inner {
+        width: 600px;
+        margin-top: -150px;
+    }
+
+    .sw-cms-create-wizard__title {
+        text-wrap: balance;
+        color: var(--color-icon-text-primary-default);
+        font-size: var(--font-size-3xl);
+        line-height: var(--font-size-3xl);
+        font-weight: normal;
+    }
+
+    .sw-cms-create-wizard__back {
+        margin: 20px 0;
+        color: var(--color-text-brand-default);
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .mt-icon {
+            margin: 1px 4px 0 0;
+        }
+    }
+
+    .sw-cms-stage-section-selection {
+        height: auto;
+        margin: 40px 0 20px;
+    }
+}
+
+
+.sw-cms-create-wizard__step-1 {
+    .sw-cms-create-wizard__page-type-selection {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--scale-size-24);
+        justify-content: center;
+    }
+
+    .sw-cms-create-wizard__page-type {
+        border: 1px solid var(--color-border-primary-default);
+        color: var(--color-text-primary-default);
+        background: var(--color-interaction-secondary-default);
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: $border-radius-default;
+        display: flex;
+        flex-basis: 140px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        &:hover, &:focus-visible {
+            background: var(--color-interaction-secondary-hover);
+        }
+
+        &.is--disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        &:focus-visible {
+            outline: var(--scale-size-2) solid var(--color-border-brand-selected);
+            outline-offset: var(--scale-size-2);
+        }
+
+        .mt-icon {
+            margin-bottom: 8px;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.sw-cms-create-wizard__step1-helptext {
+    max-width: 60ch;
+    margin-inline: auto;
+    font-size: var(--font-size-s);
+    line-height: var(--font-line-height-s);
+    text-wrap: balance;
+}
+
+.sw-cms-create-wizard__step-2 {
+    .sw-cms-stage-section-selection {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+.sw-cms-create-wizard__step-3 {
+    .sw-cms-create-wizard__name-select {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .sw-field {
+        text-align: left;
+    }
+
+    .sw-cms-create-wizard__page-preview {
+        flex: 1 220px;
+        border: 1px solid var(--color-border-primary-default);
+        border-radius: 4px;
+        padding: 10px 10px 0;
+        background: var(--color-background-primary-default);
+        display: grid;
+        grid-template-rows: 120px 40px;
+
+        .sw-cms-create-wizard__preview_image {
+            background: center center no-repeat $color-white;
+            border: 1px solid var(--color-border-primary-default);
+            border-radius: 4px;
+        }
+
+        .sw-cms-create-wizard__preview_info {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            color: var(--color-icon-primary-default);
+            align-items: center;
+
+            .mt-icon {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    .sw-cms-create-wizard__page-completion-buttons {
+        display: grid;
+        align-items: center;
+        width: 280px;
+    }
+}
+
+.sw-cms-create-wizard__step2-helptext {
+    max-width: 60ch;
+    margin-inline: auto;
+    font-size: var(--font-size-s);
+    line-height: var(--font-line-height-s);
+    text-wrap: balance;
+}
+
+.sw-cms-create-wizard__page-completion {
+    flex: 1;
+}
+
+.sw-cms-create-wizard__page-completion-name {
+    text-align: left;
+}

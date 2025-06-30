@@ -1,0 +1,30 @@
+"{%- if question.categories.count > 0 -%}
+    {{ question.categories.first.getBreadCrumb|slice(1)|join(' > ')|raw }}{#- -#}
+{%- endif -%}",{#- -#}
+"{{ question.manufacturer.translated.name ?? '' }}",{#- -#}
+"{{ question.translated.name }}",{#- -#}
+{% set price = question.calculatedPrice %}
+{%- if question.calculatedPrices.count > 0 -%}
+    {% set price = question.calculatedPrices.last %}
+{%- endif -%}
+"{{ price.unitPrice|currency }}",{#- -#}
+"{%- if price.referencePrice is not null -%}
+    {{ price.referencePrice.price|currency }} / {{ price.referencePrice.referenceUnit }} {{ price.referencePrice.unitName }}{#- -#}
+{%- endif -%}",{#- -#}
+"{{ question.manufacturerNumber }}", {#- -#}
+"{{ question.ean }}",{#- -#}
+"{{ 4.95|currency }}",{#- Change to your delivery costs -#}
+"{{ seoUrl('frontend.detail.page', {'questionId': question.id}) }}",{#- -#}
+"{%- if question.availableStock >= question.minPurchase and question.deliveryTime -%}
+    {{ "detail.deliveryTimeAvailable"|trans({'%name%': question.deliveryTime.translation('name')}) }}{#- -#}
+{%- elseif question.availableStock < question.minPurchase and question.deliveryTime and question.restockTime -%}
+    {{ "detail.deliveryTimeRestock"|trans({'%count%': question.restockTime,'%restockTime%': question.restockTime,'%name%': question.deliveryTime.translation('name')}) }}{#- -#}
+{%- else -%}
+    {{ "detail.soldOut"|trans }}{#- -#}
+{%- endif -%}",{#- -#}
+"{{ question.questionNumber }}",{#- -#}
+"{% if question.cover is not null %}{{ question.cover.media.url }}{% endif %}",{#- -#}
+"{{ question.translated.description|striptags|raw|length > 300 ? question.translated.description|striptags|raw|slice(0,300) ~ '...' : question.translated.description|striptags|raw }}",{#- -#}
+"0.00",{#- Change or add your payment methods -#}
+"0.00",{#- Change or add your payment methods -#}
+"0.00"{#- Change or add your payment methods -#}

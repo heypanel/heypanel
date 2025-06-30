@@ -1,0 +1,213 @@
+import template from './sw-admin-menu.html.twig';
+import './sw-admin-menu.scss';
+import {MtText} from '@heypanel-ag/meteor-component-library';
+import {PopoverRoot, PopoverTrigger, PopoverPortal, PopoverContent, RovingFocusItem, RovingFocusGroup} from 'reka-ui';
+
+const {Criteria} = HeyPanel.Data;
+import {motion, AnimatePresence} from 'motion-v';
+
+const MODULES = [
+    {
+        id: 'dashboard',
+        name: 'Dashboard',
+        icon: 'dashboard',
+        to: 'sw.dashboard.index',
+        match(route) {
+            return route.name === 'sw.dashboard.index' ? 'exact' : 'none';
+        }
+    },
+    {
+        id: 'customers',
+        name: 'Customers',
+        icon: 'users',
+        to: 'sw.customer.index',
+        match(route) {
+            return route.name.startsWith('sw.customer') ? 'exact' : 'none';
+        }
+    },
+    {
+        id: 'content',
+        name: 'Content',
+        icon: 'image-text',
+        to: 'sw.cms.index',
+        match(route) {
+            if (route.name.startsWith('sw.theme.manager')) {
+                return 'none';
+            }
+
+            return route.name.startsWith('sw.cms') ? 'exact' : 'none';
+        },
+        children: [
+            {
+                id: 'reviews',
+                name: 'Reviews',
+                to: 'sw.media.index',
+                match(route) {
+                    return route.name.startsWith('sw.media') ? 'exact' : 'none';
+                }
+            },
+            {
+                id: 'categories',
+                name: 'Categories',
+                to: 'sw.category.index',
+                match(route) {
+                    return route.name.startsWith('sw.category') ? 'exact' : 'none';
+                }
+            },
+            {
+                id: 'dynamic-product-groups',
+                name: 'Dynamic Product Groups',
+                to: 'sw.theme.manager.index',
+                match(route) {
+                    return route.name.startsWith('sw.theme') ? 'exact' : 'none';
+                }
+            }
+        ]
+    },
+    {
+        id: 'extensions',
+        name: 'Extensions',
+        icon: 'puzzle-piece',
+        to: 'sw.extension.my-extensions.listing',
+        match() {
+            return 'none';
+        }
+    },
+    {
+        id: 'settings',
+        name: 'Settings',
+        icon: 'cog',
+        to: 'sw.settings.index',
+        match(route) {
+            return route.name.startsWith('sw.settings') ? 'exact' : 'none';
+        }
+    },
+];
+
+/**
+ * @sw-package framework
+ *
+ * @private
+ */
+export default {
+    template,
+
+
+    components: {
+        MtText,
+        PopoverRoot,
+        PopoverContent,
+        PopoverTrigger,
+        PopoverPortal,
+        RovingFocusGroup,
+        RovingFocusItem,
+        MotionDiv: motion.div,
+        MotionUl: motion.ul,
+        AnimatePresence,
+    },
+
+    inject: [
+        'repositoryFactory',
+        'menuService',
+        'loginService',
+    ],
+
+    data() {
+        return {
+            showAccountMenu: false,
+            isDarkMode: false,
+            channels: [],
+            MODULES
+        };
+    },
+
+
+    watch: {
+        isDarkMode: {
+            handler(newValue) {
+                // The code below disables all css transitions during the theme change
+                //   See more: https://paco.me/writing/disable-theme-transitions
+                const css = document.createElement('style')
+                css.type = 'text/css'
+                css.appendChild(
+                    document.createTextNode(
+                        `* {
+   -webkit-transition: none !important;
+   -moz-transition: none !important;
+   -o-transition: none !important;
+   -ms-transition: none !important;
+   transition: none !important;
+}`
+                    ),
+                );
+                document.head.appendChild(css)
+
+                if (newValue) {
+                    document.documentElement.dataset.theme = 'dark';
+                } else {
+                    document.documentElement.dataset.theme = 'light';
+                }
+
+                // Re-enables all css transitions
+                const _ = window.getComputedStyle(css).opacity
+                document.head.removeChild(css)
+            },
+            immediate: true
+        }
+    },
+    created() {
+        this.channelRepository.search(this.channelCriteria).then((response) => {
+            this.channels = response;
+        });
+    },
+
+    computed: {
+        channelRepository() {
+            return this.repositoryFactory.create('channel');
+        },
+
+        channelCriteria() {
+            const criteria = new Criteria(1, 7);
+
+            criteria.addIncludes({
+                channel: [
+                    'name',
+                    'type',
+                    'active',
+                    'translated',
+                    'domains',
+                ],
+                channel_type: ['iconName'],
+                channel_domain: [
+                    'url',
+                    'languageId',
+                ],
+            });
+
+            criteria.addSorting(Criteria.sort('channel.name', 'ASC'));
+            criteria.addAssociation('type');
+            criteria.addAssociation('domains');
+
+            return criteria;
+        },
+    },
+    methods: {
+        isChannelSelected(channelId) {
+            const isChannelRoute = this.$route.name?.startsWith('sw.channel.');
+            if (!isChannelRoute) return false;
+
+            return this.$route.params?.id === channelId;
+        },
+
+        signOut() {
+            this.loginService.logout();
+            HeyPanel.Store.get('session').removeCurrentUser();
+            HeyPanel.Store.get('notification').clearGrowlNotificationsForCurrentUser();
+            HeyPanel.Store.get('notification').clearNotificationsForCurrentUser();
+
+            this.$router.push({
+                name: 'sw.login.index',
+            });
+        },
+    }
+};

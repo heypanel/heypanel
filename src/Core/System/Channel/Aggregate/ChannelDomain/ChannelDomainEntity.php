@@ -1,0 +1,125 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\System\Channel\Aggregate\ChannelDomain;
+
+use HeyPanel\Core\Framework\DataAbstractionLayer\Entity;
+use HeyPanel\Core\Framework\DataAbstractionLayer\EntityCustomFieldsTrait;
+use HeyPanel\Core\Framework\DataAbstractionLayer\EntityIdTrait;
+use HeyPanel\Core\System\Channel\ChannelEntity;
+use HeyPanel\Core\System\Currency\CurrencyEntity;
+use HeyPanel\Core\System\Language\LanguageEntity;
+use HeyPanel\Core\System\Snippet\Aggregate\SnippetSet\SnippetSetEntity;
+
+class ChannelDomainEntity extends Entity
+{
+    use EntityCustomFieldsTrait;
+    use EntityIdTrait;
+
+    protected string $url;
+
+    protected ?string $currencyId = null;
+
+    protected ?CurrencyEntity $currency = null;
+
+    protected ?string $snippetSetId = null;
+
+    protected ?SnippetSetEntity $snippetSet = null;
+
+    protected string $channelId;
+
+    protected ?ChannelEntity $channel = null;
+
+    protected string $languageId;
+
+    protected ?LanguageEntity $language = null;
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    public function getCurrencyId(): ?string
+    {
+        return $this->currencyId;
+    }
+
+    public function setCurrencyId(?string $currencyId): void
+    {
+        $this->currencyId = $currencyId;
+    }
+
+    public function getCurrency(): ?CurrencyEntity
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?CurrencyEntity $currency): void
+    {
+        $this->currency = $currency;
+    }
+
+    public function getSnippetSetId(): ?string
+    {
+        return $this->snippetSetId;
+    }
+
+    public function setSnippetSetId(?string $snippetSetId): void
+    {
+        $this->snippetSetId = $snippetSetId;
+    }
+
+    public function getSnippetSet(): ?SnippetSetEntity
+    {
+        return $this->snippetSet;
+    }
+
+    public function setSnippetSet(?SnippetSetEntity $snippetSet): void
+    {
+        $this->snippetSet = $snippetSet;
+    }
+
+    public function getChannelId(): string
+    {
+        return $this->channelId;
+    }
+
+    public function setChannelId(string $channelId): void
+    {
+        $this->channelId = $channelId;
+    }
+
+    public function getChannel(): ?ChannelEntity
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?ChannelEntity $channel): void
+    {
+        $this->channel = $channel;
+    }
+
+    public function getLanguageId(): string
+    {
+        return $this->languageId;
+    }
+
+    public function setLanguageId(string $languageId): void
+    {
+        $this->languageId = $languageId;
+    }
+
+    public function getLanguage(): ?LanguageEntity
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(?LanguageEntity $language): void
+    {
+        $this->language = $language;
+    }
+}

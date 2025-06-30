@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    
+    <services>
+        
+        <service id="HeyPanel\Frontend\Framework\Routing\DomainNotMappedListener">
+            <argument type="service" id="service_container"/>
+
+            <tag name="kernel.event_listener" event="kernel.exception"/>
+        </service>
+
+       <service id="HeyPanel\Frontend\Framework\Routing\MaintenanceModeResolver">
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Routing\MaintenanceModeResolver"/>
+        </service>
+
+        <service id="HeyPanel\Frontend\Framework\Routing\Router" decorates="router">
+            <argument type="service" id="HeyPanel\Frontend\Framework\Routing\Router.inner"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+
+         <service id="HeyPanel\Frontend\Framework\Routing\CachedDomainLoader" decorates="HeyPanel\Frontend\Framework\Routing\DomainLoader" decoration-priority="-1000">
+            <argument type="service" id="HeyPanel\Frontend\Framework\Routing\CachedDomainLoader.inner"/>
+            <argument type="service" id="cache.object"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="HeyPanel\Frontend\Framework\Routing\CachedDomainLoaderInvalidator">
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Frontend\Framework\Routing\DomainLoader">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+        
+        <service id="HeyPanel\Frontend\Framework\Routing\FrontendRouteScope">
+            <tag name="heypanel.route_scope"/>
+        </service>
+        
+         <service id="HeyPanel\Frontend\Framework\Routing\RequestTransformer"
+                 decorates="HeyPanel\Core\Framework\Routing\RequestTransformerInterface">
+
+            <argument type="service" id="HeyPanel\Frontend\Framework\Routing\RequestTransformer.inner"/>
+            <argument type="service" id="HeyPanel\Core\Content\Seo\SeoResolver"/>
+            <argument>%heypanel.routing.registered_api_prefixes%</argument>
+            <argument type="service" id="HeyPanel\Frontend\Framework\Routing\DomainLoader"/>
+        </service>
+        
+        <service id="HeyPanel\Frontend\Framework\Command\ChannelCreateFrontendCommand">
+            <argument type="service" id="snippet_set.repository"/>
+            <argument type="service" id="HeyPanel\Core\Maintenance\Channel\Service\ChannelCreator"/>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="HeyPanel\Frontend\Framework\Twig\Components\UxComponentHelper">
+            <argument>Resources/views/components/</argument>
+            <argument>%kernel.project_dir%</argument>
+            <argument>%kernel.bundles_metadata%</argument>
+            <argument type="service" id="twig"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Twig\NamespaceHierarchy\NamespaceHierarchyBuilder"/>
+            <argument type="service" id="ux.twig_component.component_factory"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Frontend\Twig\Components\Carousel">
+            <tag name="twig.component" />
+        </service>
+
+    </services>
+</container>

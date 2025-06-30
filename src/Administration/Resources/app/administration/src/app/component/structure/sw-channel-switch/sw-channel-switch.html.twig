@@ -1,0 +1,68 @@
+{% block sw_channel_switch %}
+<div class="sw-channel-switch">
+    {% block sw_channel_switch_modal %}
+    <sw-modal
+        v-if="showUnsavedChangesModal"
+        :title="$tc('sw-channel-switch.titleModalUnsavedChanges')"
+        variant="small"
+        @modal-close="onCloseChangesModal"
+    >
+        {% block sw_channel_switch_message %}
+        <p>{{ $tc('sw-channel-switch.messageModalUnsavedChanges') }}</p>
+        {% endblock %}
+        {% block sw_channel_switch_footer %}
+        <template #modal-footer>
+            {% block sw_channel_switch_footer_button_close %}
+            <mt-button
+                size="small"
+                variant="secondary"
+                @click="onCloseChangesModal"
+            >
+                {{ $tc('global.default.cancel') }}
+            </mt-button>
+            {% endblock %}
+
+            {% block sw_channel_switch_footer_button_revert %}
+            <mt-button
+                size="small"
+                variant="secondary"
+                @click="onClickRevertUnsavedChanges"
+            >
+                {{ $tc('sw-channel-switch.titleModalButtonRevertUnsavedChanges') }}
+            </mt-button>
+            {% endblock %}
+
+            {% block sw_channel_switch_footer_button_save %}
+            <mt-button
+                variant="primary"
+                size="small"
+                @click="onClickSaveChanges"
+            >
+                {{ $tc('global.default.save') }}
+            </mt-button>
+            {% endblock %}
+        </template>
+        {% endblock %}
+    </sw-modal>
+    {% endblock %}
+    {% block sw_channel_switch_select %}
+    <sw-entity-single-select
+        id="channelSelect"
+        ref="channelSelect"
+        :disabled="disabled"
+        :placeholder="$tc('sw-channel-switch.labelDefaultOption')"
+        :label="label"
+        :search-placeholder="$tc('sw-channel-switch.placeholderSelect')"
+        :reset-option="$tc('sw-channel-switch.labelDefaultOption')"
+        :value="channelId"
+        entity="channel"
+        show-clearable-button
+        @update:value="onChange"
+    >
+        <template #labelProperty="{item, labelProperty}">
+            <span v-if="item.translated">{{ item.translated[labelProperty] }}</span>
+        </template>
+    </sw-entity-single-select>
+    {% endblock %}
+</div>
+{% endblock %}

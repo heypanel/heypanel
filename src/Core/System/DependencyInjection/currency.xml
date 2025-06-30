@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\System\Currency\CurrencyDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\Aggregate\CurrencyCountryRounding\CurrencyCountryRoundingDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\Channel\ChannelCurrencyDefinition">
+            <tag name="heypanel.channel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\Aggregate\CurrencyTranslation\CurrencyTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\CurrencyLoadSubscriber">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\CurrencyValidator">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\CurrencyFormatter" public="true">
+            <argument type="service" id="HeyPanel\Core\System\Locale\LanguageLocaleCodeProvider"/>
+
+            <tag name="kernel.reset" method="reset"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Currency\Channel\CurrencyRoute" public="true">
+            <argument type="service" id="channel.currency.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+    </services>
+</container>

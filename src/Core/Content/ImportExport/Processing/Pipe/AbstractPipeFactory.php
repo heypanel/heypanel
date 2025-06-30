@@ -1,0 +1,15 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Content\ImportExport\Processing\Pipe;
+
+use HeyPanel\Core\Content\ImportExport\Aggregate\ImportExportLog\ImportExportLogEntity;
+
+/**
+ * @internal
+ */
+abstract class AbstractPipeFactory
+{
+    abstract public function create(ImportExportLogEntity $logEntity): AbstractPipe;
+
+    abstract public function supports(ImportExportLogEntity $logEntity): bool;
+}

@@ -1,0 +1,134 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <services>
+        
+        <service id="HeyPanel\Core\System\Channel\Validation\ChannelValidator">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        
+        <service id="HeyPanel\Core\System\Channel\Channel\ContextRoute" public="true"/>
+
+        <service id="HeyPanel\Core\System\Channel\DataAbstractionLayer\ChannelIndexer">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Dbal\Common\IteratorFactory"/>
+            <argument type="service" id="channel.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\ManyToManyIdFieldUpdater"/>
+            <tag name="heypanel.entity_indexer"/>
+        </service>
+
+         <service id="HeyPanel\Core\System\Channel\Api\ClientApiResponseListener">
+            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Api\StructEncoder"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Api\StructEncoder">
+            <argument type="service" id="HeyPanel\Core\System\Channel\Entity\DefinitionRegistryChain"/>
+            <argument type="service" id="serializer"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.reset" method="reset"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\ClientApiCustomFieldMapper">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.reset" method="reset"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelCountry\ChannelCountryDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\ChannelDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelType\ChannelTypeDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelTranslation\ChannelTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelTypeTranslation\ChannelTypeTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelCurrency\ChannelCurrencyDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelDomain\ChannelDomainDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Aggregate\ChannelLanguage\ChannelLanguageDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Entity\ChannelDefinitionInstanceRegistry" public="true">
+            <argument type="string"/>
+            <argument type="service" id="service_container"/>
+            <argument type="collection"/>
+            <argument type="collection"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Entity\DefinitionRegistryChain">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Entity\ChannelDefinitionInstanceRegistry"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\ChannelContextValueResolver">
+            <tag name="controller.argument_value_resolver" priority="1000"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\ContextFactory">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\ChannelContextPersister">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="string">%heypanel.api.store.context_lifetime%</argument>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\ChannelContextService">
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ChannelContextFactory"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ChannelContextPersister"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+        <service id="HeyPanel\Core\System\Channel\Context\ChannelContextFactory" public="true">
+            <argument type="service" id="customer_group.repository"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\BaseChannelContextFactory"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\BaseChannelContextFactory">
+            <argument type="service" id="channel.repository"/>
+            <argument type="service" id="currency.repository"/>
+            <argument type="service" id="customer_group.repository"/>
+            <argument type="service" id="country.repository"/>
+            <argument type="service" id="currency_country_rounding.repository"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ContextFactory"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\CachedBaseChannelContextFactory"
+                 decorates="HeyPanel\Core\System\Channel\Context\BaseChannelContextFactory">
+            <argument type="service" id=".inner"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Channel\Context\CachedChannelContextFactory"
+                 decorates="HeyPanel\Core\System\Channel\Context\ChannelContextFactory"
+                 decoration-priority="-1000">
+            <argument type="service" id=".inner"/>
+            <argument type="service" id="cache.object"/>
+        </service>
+    </services>
+
+</container>

@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\Content\Category\CategoryDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Aggregate\CategoryTranslation\CategoryTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Aggregate\CategoryTag\CategoryTagDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Channel\ChannelCategoryDefinition">
+            <tag name="heypanel.channel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Service\NavigationLoader">
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="HeyPanel\Core\Content\Category\Channel\NavigationRoute"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Channel\NavigationRoute" public="true">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="channel.category.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Channel\TreeBuildingNavigationRoute" decorates="HeyPanel\Core\Content\Category\Channel\NavigationRoute" decoration-priority="-2000" public="true">
+            <argument type="service" id="HeyPanel\Core\Content\Category\Channel\TreeBuildingNavigationRoute.inner"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Channel\CategoryRoute" public="true">
+            <argument type="service" id="channel.category.repository"/>
+            <argument type="service" id="HeyPanel\Core\Content\Cms\Channel\ChannelCmsPageLoader"/>
+            <argument type="service" id="HeyPanel\Core\Content\Category\Channel\ChannelCategoryDefinition"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Channel\CategoryListRoute" public="true">
+            <argument type="service" id="channel.category.repository"/>
+        </service>
+
+
+        <service id="HeyPanel\Core\Content\Category\DataAbstractionLayer\CategoryIndexer">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Dbal\Common\IteratorFactory"/>
+            <argument type="service" id="category.repository"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\ChildCountUpdater"/>
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\TreeUpdater"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="messenger.default_bus"/>
+            <tag name="heypanel.entity_indexer"/>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\TreeUpdater">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Service\CategoryUrlGenerator">
+            <argument type="service" id="HeyPanel\Core\Content\Seo\SeoUrlPlaceholderHandlerInterface" />
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Validation\EntryPointValidator">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Subscriber\CategorySubscriber">
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="HeyPanel\Core\Content\Category\Service\CategoryUrlGenerator"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Subscriber\CategoryTreeMovedSubscriber">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Indexing\EntityIndexerRegistry"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\DataAbstractionLayer\CategoryNonExistentExceptionHandler">
+            <tag name="heypanel.dal.exception_handler"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Category\Cms\CategoryNavigationCmsElementResolver">
+            <argument type="service" id="HeyPanel\Core\Content\Category\Service\NavigationLoader"/>
+
+            <tag name="heypanel.cms.data_resolver"/>
+        </service>
+    </services>
+</container>

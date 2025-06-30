@@ -1,0 +1,13 @@
+@import "~scss/variables";
+
+.sw-channel-detail {
+    .sw-channel-detail-analytics__headline-text {
+        font-weight: $font-weight-semi-bold;
+        font-size: $font-size-m;
+        margin-bottom: 20px;
+    }
+
+    .sw-channel-detail-analytics__description {
+        margin-bottom: 30px;
+    }
+}

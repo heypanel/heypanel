@@ -1,0 +1,124 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- Template Entities -->
+        <service id="HeyPanel\Core\Content\MailTemplate\MailTemplateDefinition">
+            <tag name="heypanel.entity.definition"  entity="mail_template"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailTemplateTranslation\MailTemplateTranslationDefinition">
+            <tag name="heypanel.entity.definition"  entity="mail_template_translation"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailTemplateType\MailTemplateTypeDefinition">
+            <tag name="heypanel.entity.definition"  entity="mail_template_type"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailTemplateTypeTranslation\MailTemplateTypeTranslationDefinition">
+            <tag name="heypanel.entity.definition"  entity="mail_template_type_translation"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailTemplateMedia\MailTemplateMediaDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <!-- Header Footer Entities -->
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailHeaderFooter\MailHeaderFooterDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\MailTemplate\Aggregate\MailHeaderFooterTranslation\MailHeaderFooterTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <!-- Controller -->
+        <service id="HeyPanel\Core\Content\MailTemplate\Api\MailActionController" public="true">
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Service\MailService"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Twig\StringTemplateRenderer"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <!-- Sending -->
+        <service id="HeyPanel\Core\Content\Mail\Message\SendMailHandler">
+            <argument type="service" id="mailer.transports"/>
+            <argument type="service" id="heypanel.filesystem.private"/>
+            <argument type="service" id="logger"/>
+            <tag name="messenger.message_handler"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Service\MailSender" public="true">
+            <argument type="service" id="mailer.mailer"/>
+            <argument type="service" id="heypanel.filesystem.private"/>
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+            <argument>%heypanel.mail.max_body_length%</argument>
+            <argument type="abstract" id="message bus"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Service\MailFactory" public="true">
+            <argument type="service" id="validator"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Service\MailService">
+            <argument type="service" id="HeyPanel\Core\Framework\Validation\DataValidator" />
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Twig\StringTemplateRenderer" />
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Service\MailFactory" />
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Service\MailSender" />
+            <argument type="service" id="media.repository" />
+            <argument type="service" id="channel.repository"/>
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="logger"/>
+            <argument type="service" id="HeyPanel\Core\System\Locale\LanguageLocaleCodeProvider"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Service\SendMailTemplate">
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Service\MailService"/>
+            <argument type="service" id="mail_template.repository"/>
+            <argument type="service" id="logger"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Translation\Translator"/>
+            <argument type="service" id="HeyPanel\Core\System\Locale\LanguageLocaleCodeProvider"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Service\MailAttachmentsBuilder" public="true">
+            <argument type="service" id="HeyPanel\Core\Content\Media\MediaService"/>
+            <argument type="service" id="media.repository"/>
+        </service>
+
+        <service id="core_mailer" alias="mailer" />
+
+        <service id="HeyPanel\Core\Content\Mail\Transport\MailerTransportLoader">
+            <argument type="service" id="mailer.transport_factory"/>
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Service\MailAttachmentsBuilder"/>
+            <argument type="service" id="heypanel.filesystem.public"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthTransportFactoryDecorator"
+                 decorates="mailer.transport_factory.smtp">
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthTransportFactoryDecorator.inner"/>
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthAuthenticator"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthAuthenticator">
+            <argument type="service" id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthTokenProvider"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Transport\SmtpOauthTokenProvider">
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="cache.object"/>
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\Mail\Subscriber\FailedMessageSubscriber">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+    </services>
+</container>

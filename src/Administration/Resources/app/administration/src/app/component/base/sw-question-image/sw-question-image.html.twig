@@ -1,0 +1,88 @@
+{% block sw_question_image %}
+<div
+    class="sw-question-image"
+    :class="questionImageClasses"
+>
+    <template v-if="!isPlaceholder">
+        {% block sw_question_image_preview %}
+        <sw-media-preview-v2
+            class="sw-question-image__image"
+            :source="mediaId"
+            :hide-tooltip="false"
+        />
+
+        <sw-label
+            v-if="showCoverLabel && isCover"
+            class="sw-question-image__cover-label"
+            variant="primary"
+            size="medium"
+            appearance="pill"
+        >
+            {{ $tc('sw-question.mediaForm.coverSubline') }}
+        </sw-label>
+
+        {# @experimental stableVersion:v6.8.0 feature:SPATIAL_BASES #}
+        {% block sw_question_image_preview_spatial_labels %}
+        <sw-label
+            v-if="isSpatial"
+            class="sw-question-image__spatial-label"
+            variant="neutral-reversed"
+            size="medium"
+            appearance="pill"
+        >
+            <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -->
+            <label
+                v-if="isArReady"
+                class="sw-label__ar-ready"
+            >
+                {{ $tc('sw-question.mediaForm.arSubline') }}
+            </label>
+            <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -->
+            <label
+                v-else
+                class="sw-label__spatial"
+            >
+                {{ $tc('sw-question.mediaForm.spatialSubline') }}
+            </label>
+        </sw-label>
+        {% endblock %}
+
+        {% endblock %}
+        <sw-context-button class="sw-question-image__context-button">
+            {% block sw_question_image_context %}
+            {% block sw_question_image_context_cover_action %}
+            <sw-context-menu-item
+                v-if="showCoverLabel && !isCover"
+                class="sw-question-image__button-cover"
+                @click="$emit('sw-question-image-cover')"
+            >
+                {{ $tc('global.sw-question-image.context.buttonAsCover') }}
+            </sw-context-menu-item>
+            {% endblock %}
+
+            {% block sw_question_image_context_delete_action %}
+            <sw-context-menu-item
+                variant="danger"
+                class="sw-question-image__button-delete"
+                @click="$emit('sw-question-image-delete')"
+            >
+                {{ $tc('global.sw-question-image.context.buttonRemove') }}
+            </sw-context-menu-item>
+            {% endblock %}
+            {% endblock %}
+        </sw-context-button>
+    </template>
+    <div
+        v-else
+        class="is--invalid-drag"
+    >
+        {% block sw_question_image_placeholder %}
+        <mt-icon
+            class="sw-question-image__placeholder-icon"
+            :name="'regular-image'"
+            size="16px"
+        />
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,709 @@
+import type RuleConditionService from '../service/rule-condition.service';
+
+const { Application } = HeyPanel;
+
+/**
+ * @sw-package fundamentals@after-sales
+ */
+Application.addServiceProviderDecorator('ruleConditionDataProviderService', (ruleConditionService: RuleConditionService) => {
+    ruleConditionService.addCondition('dateRange', {
+        component: 'sw-condition-date-range',
+        label: 'global.sw-condition.condition.dateRangeRule.label',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('timeRange', {
+        component: 'sw-condition-time-range',
+        label: 'global.sw-condition.condition.timeRangeRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('numberOfReviews', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.numberOfReviews',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberOrderCount', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderCountRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberDaysSinceLastOrder', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.daysSinceLastOrderRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('channel', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.channelRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('currency', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.currencyRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('language', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.languageRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('cartTaxDisplay', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.cartTaxDisplay.label',
+        scopes: ['cart'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('memberBillingCountry', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.billingCountryRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberBillingStreet', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.billingStreetRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberBillingZipCode', {
+        component: 'sw-condition-billing-zip-code',
+        label: 'global.sw-condition.condition.billingZipCodeRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberCustomerGroup', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberGroupRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberRequestedGroup', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberRequestedGroupRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberTag', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberTagRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberCustomerNumber', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberNumberRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberDifferentAddresses', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.differentAddressesRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberEmail', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.emailRule.label',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberLastName', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.lastNameRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberIsCompany', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.isCompanyRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberIsGuest', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.isGuestRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberIsNewsletterRecipient', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.isNewsletterRecipient',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberShippingCountry', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.shippingCountryRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberShippingStreet', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.shippingStreetRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberShippingZipCode', {
+        component: 'sw-condition-shipping-zip-code',
+        label: 'global.sw-condition.condition.shippingZipCodeRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberLoggedIn', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberLoggedInRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+
+    ruleConditionService.addCondition('memberBillingCity', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.billingCityRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberBillingState', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.billingStateRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberIsActive', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberIsActiveRule',
+        scopes: ['global'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberShippingCity', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.shippingCityRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberShippingState', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.shippingStateRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberAge', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberAgeRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberDaysSinceLastLogin', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberDaysSinceLastLogin',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberDaysSinceFirstLogin', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberDaysSinceFirstLogin',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberAffiliateCode', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberAffiliateCodeRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('memberCampaignCode', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberCampaignCodeRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('orderAffiliateCode', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderAffiliateCodeRule',
+        scopes: ['checkout'],
+        group: 'order',
+    });
+    ruleConditionService.addCondition('orderCampaignCode', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderCampaignCodeRule',
+        scopes: ['checkout'],
+        group: 'order',
+    });
+    ruleConditionService.addCondition('cartCartAmount', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.cartAmountRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartPositionPrice', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.cartPositionPrice',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartGoodsCount', {
+        component: 'sw-condition-goods-count',
+        label: 'global.sw-condition.condition.goodsCountRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartTotalPurchasePrice', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.cartTotalPurchasePrice',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartGoodsPrice', {
+        component: 'sw-condition-goods-price',
+        label: 'global.sw-condition.condition.goodsPriceRule',
+        scopes: ['cart'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemOfType', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemOfTypeRule.label',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItem', {
+        component: 'sw-condition-line-item',
+        label: 'global.sw-condition.condition.lineItemRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemsInCartCount', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.lineItemsInCartCountRule',
+        scopes: ['cart'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemTotalPrice', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemTotalPriceRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemUnitPrice', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemUnitPriceRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemWithQuantity', {
+        component: 'sw-condition-line-item-with-quantity',
+        label: 'global.sw-condition.condition.lineItemWithQuantityRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartHasDeliveryFreeItem', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.hasDeliveryFreeItemRule',
+        scopes: ['cart'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('dayOfWeek', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.dayOfWeekRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('cartWeight', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.weightOfCartRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartVolume', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.volumeOfCartRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartShippingCost', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.cartShippingCost',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+    ruleConditionService.addCondition('cartLineItemTag', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemTagRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('alwaysValid', {
+        component: 'sw-condition-is-always-valid',
+        label: 'global.sw-condition.condition.alwaysValidRule',
+        scopes: ['global'],
+        group: 'general',
+    });
+    ruleConditionService.addCondition('cartLineItemProperty', {
+        component: 'sw-condition-line-item-property',
+        label: 'global.sw-condition.condition.lineItemPropertyRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemIsNew', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemIsNewRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemOfManufacturer', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemOfManufacturerRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemPurchasePrice', {
+        component: 'sw-condition-line-item-purchase-price',
+        label: 'global.sw-condition.condition.lineItemPurchasePriceRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemCreationDate', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemCreationDateRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemReleaseDate', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemReleaseDateRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemClearanceSale', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemClearanceSale',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemPromoted', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemPromotedRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemInCategory', {
+        component: 'sw-condition-line-item-in-category',
+        label: 'global.sw-condition.condition.lineItemInCategoryRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemInProductStream', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemInProductStreamRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemTaxation', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemTaxationRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemDimensionWidth', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemDimensionWidthRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemDimensionHeight', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemDimensionHeightRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemDimensionLength', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemDimensionLengthRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemDimensionWeight', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemDimensionWeightRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemDimensionVolume', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemDimensionVolumeRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemListPrice', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemListPriceRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemListPriceRatio', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemListPriceRatioRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemCustomField', {
+        component: 'sw-condition-line-item-custom-field',
+        label: 'global.sw-condition.condition.lineItemCustomFieldRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemStock', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemStockRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('cartLineItemActualStock', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemActualStockRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+    ruleConditionService.addCondition('memberCustomField', {
+        component: 'sw-condition-member-custom-field',
+        label: 'global.sw-condition.condition.memberCustomFieldRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+    ruleConditionService.addCondition('paymentMethod', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.paymentMethodRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+
+    ruleConditionService.addCondition('shippingMethod', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.shippingMethodRule',
+        scopes: ['cart'],
+        group: 'cart',
+    });
+
+    ruleConditionService.addCondition('cartLineItemGoodsTotal', {
+        component: 'sw-condition-line-item-goods-total',
+        label: 'global.sw-condition.condition.lineItemGoodsTotalRule',
+        scopes: ['lineItem'],
+        group: 'cart',
+    });
+
+    ruleConditionService.addCondition('memberOrderTotalAmount', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderTotalAmountRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+
+    ruleConditionService.addCondition('promotionLineItem', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.promotionLineItemRule',
+        scopes: ['lineItem'],
+        group: 'promotion',
+    });
+
+    ruleConditionService.addCondition('promotionCodeOfType', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.promotionCodeOfType',
+        scopes: ['cart'],
+        group: 'promotion',
+    });
+
+    ruleConditionService.addCondition('promotionsInCartCount', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.promotionsInCartCountRule',
+        scopes: ['cart'],
+        group: 'promotion',
+    });
+
+    ruleConditionService.addCondition('promotionValue', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.promotionValueRule',
+        scopes: ['cart'],
+        group: 'promotion',
+    });
+
+    ruleConditionService.addCondition('memberBirthday', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberBirthdayRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+
+    ruleConditionService.addCondition('memberCreatedByAdmin', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberCreatedByAdminRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+
+    ruleConditionService.addCondition('memberSalutation', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.memberSalutationRule',
+        scopes: ['checkout'],
+        group: 'member',
+    });
+
+    ruleConditionService.addCondition('cartLineItemProductStates', {
+        component: 'sw-condition-generic-line-item',
+        label: 'global.sw-condition.condition.lineItemProductStates',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+
+    ruleConditionService.addCondition('orderTag', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderTagRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderTrackingCode', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderTrackingCodeRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderDeliveryStatus', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderDeliveryStatusRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('adminChannelSource', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.adminChannelSourceRule',
+        scopes: ['checkout'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderTransactionStatus', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderTransactionStatusRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderStatus', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderStatusRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderCreatedByAdmin', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderCreatedByAdminRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderCustomField', {
+        component: 'sw-condition-order-custom-field',
+        label: 'global.sw-condition.condition.orderCustomFieldRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderDocumentType', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderDocumentTypeRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('orderDocumentTypeSent', {
+        component: 'sw-condition-generic',
+        label: 'global.sw-condition.condition.orderDocumentTypeSentRule',
+        scopes: ['order'],
+        group: 'order',
+    });
+
+    ruleConditionService.addCondition('cartLineItemPropertyValue', {
+        component: 'sw-condition-line-item-property',
+        label: 'global.sw-condition.condition.lineItemPropertyValueRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+
+    ruleConditionService.addCondition('cartLineItemVariantValue', {
+        component: 'sw-condition-line-item-property',
+        label: 'global.sw-condition.condition.lineItemVariantValueRule',
+        scopes: ['lineItem'],
+        group: 'item',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('personaPromotions', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+        ],
+        equalsAny: [
+            ...ruleConditionService.getRestrictionsByGroup('member'),
+            'alwaysValid',
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.personaPromotions',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('orderPromotions', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+            ...ruleConditionService.getRestrictionsByGroup('order'),
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.orderPromotions',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('cartPromotions', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+            ...ruleConditionService.getRestrictionsByGroup('order'),
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.cartPromotions',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('promotionSetGroups', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.promotionSetGroups',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('promotionDiscounts', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.promotionDiscounts',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('shippingMethodPriceCalculations', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.shippingMethodPriceCalculations',
+    });
+
+    ruleConditionService.addAwarenessConfiguration('shippingMethodPrices', {
+        notEquals: [
+            'cartCartAmount',
+            'cartShippingCost',
+        ],
+        snippet: 'sw-restricted-rules.restrictedAssignment.shippingMethodPrices',
+    });
+
+    return ruleConditionService;
+});

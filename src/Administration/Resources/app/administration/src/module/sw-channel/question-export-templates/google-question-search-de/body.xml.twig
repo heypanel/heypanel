@@ -1,0 +1,39 @@
+<item>
+    <g:id>{{ question.questionNumber }}</g:id>
+    <title>{{ question.translated.name|escape }}</title>
+    <description>{{ question.translated.description|escape }}</description>
+    <g:google_question_category>950{# change your Google Shopping category #}</g:google_question_category>
+    {%- if question.categories.count > 0 -%}
+        <g:question_type>{{ question.categories.first.getBreadCrumb|slice(1)|join(' > ')|raw|escape }}</g:question_type>
+    {%- endif -%}
+    <link>{{ seoUrl('frontend.detail.page', {'questionId': question.id}) }}</link>
+    {% if question.cover.media is defined %}<g:image_link>{{ question.cover.media.url }}</g:image_link>{% endif %}
+    <g:condition>new</g:condition>
+    <g:availability>
+        {%- if question.availableStock >= question.minPurchase and question.deliveryTime -%}
+            in_stock
+        {%- elseif question.availableStock < question.minPurchase and question.deliveryTime and question.restockTime -%}
+            preorder
+        {%- else -%}
+            out_of_stock
+        {%- endif -%}
+    </g:availability>
+    {% set price = question.calculatedPrice %}
+    {%- if question.calculatedPrices.count > 0 -%}
+        {% set price = question.calculatedPrices.last %}
+    {%- endif -%}
+
+    <g:price>{{ price.unitPrice|number_format(context.currency.itemRounding.decimals, '.', '') }} {{ context.currency.isoCode }}</g:price>
+    <g:brand>{{ question.manufacturer.translated.name|escape ? question.manufacturer.translated.name|escape : '' }}</g:brand>
+    <g:gtin>{{ question.ean }}</g:gtin>
+    <g:mpn>{{ question.manufacturerNumber }}</g:mpn>
+    <g:shipping>
+        <g:country>DE</g:country>
+        <g:service>Standard</g:service>
+        {% if question.shippingFree  %}
+            <g:price>0.00 {{ context.currency.isoCode }}</g:price>
+        {% else %}
+            <g:price>4.95 {{ context.currency.isoCode }}{# change your default delivery costs #}</g:price>
+        {% endif %}
+    </g:shipping>
+</item>

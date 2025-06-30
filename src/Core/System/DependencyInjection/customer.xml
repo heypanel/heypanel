@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\System\Customer\CustomerDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Aggregate\CustomerGroup\CustomerGroupDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\CustomerValueResolver">
+            <tag name="controller.argument_value_resolver" priority="1002"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Aggregate\CustomerTag\CustomerTagDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        
+        <service id="HeyPanel\Core\System\Customer\Password\LegacyEncoder\Md5">
+            <tag name="heypanel.legacy_encoder"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Password\LegacyEncoder\Sha256">
+            <tag name="heypanel.legacy_encoder"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Password\LegacyPasswordVerifier">
+            <argument type="tagged_iterator" tag="heypanel.legacy_encoder" />
+        </service>
+        
+        <service id="HeyPanel\Core\System\Customer\Channel\AccountService">
+            <argument type="service" id="customer.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="HeyPanel\Core\System\Customer\Password\LegacyPasswordVerifier"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Channel\LogoutRoute" public="true">
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ChannelContextPersister"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Validation\Constraint\CustomerEmailUniqueValidator">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+
+            <tag name="validator.constraint_validator"/>
+        </service>
+
+
+        <service id="HeyPanel\Core\System\Customer\Channel\LoginRoute" public="true">
+            <argument type="service" id="HeyPanel\Core\System\Customer\Channel\AccountService"/>
+            <argument type="service" id="Symfony\Component\HttpFoundation\RequestStack"/>
+            <argument type="service" id="HeyPanel\Core\Framework\RateLimiter\RateLimiter"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Validation\CustomerValidationFactory"/>
+
+       <service id="HeyPanel\Core\System\Customer\Validation\PasswordValidationFactory">
+            <argument type="service" id="HeyPanel\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Customer\Channel\RegisterRoute" public="true">
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="HeyPanel\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Validation\DataValidator"/>
+            <argument type="service" id="HeyPanel\Core\System\Customer\Validation\CustomerValidationFactory"/>
+            <argument type="service" id="customer.repository"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ChannelContextPersister"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\Context\ChannelContextService"/>
+            <argument type="service" id="HeyPanel\Core\System\Channel\ClientApiCustomFieldMapper"/>
+            <argument type="service" id="HeyPanel\Core\System\Customer\Validation\PasswordValidationFactory"/>
+        </service>
+    </services>
+</container>

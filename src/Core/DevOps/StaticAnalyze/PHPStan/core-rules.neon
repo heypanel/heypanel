@@ -1,0 +1,19 @@
+rules:
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Deprecation\DeprecatedMethodsThrowDeprecationRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Internal\InternalClassRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Internal\InternalMethodRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Migration\AddColumnRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Migration\NoAfterStatementRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Migration\NoDropStatementInUpdateRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Tests\CoversAttributeRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\Tests\MockingSimpleObjectsNotAllowedRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\FinalClassRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\AbstractClassUsageRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\DecorationPatternRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\DomainExceptionRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\ExtensionRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\NoNewRequestInStorefrontRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\AclValidPermissionsInMethodRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\AclValidPermissionsInRouteAttributesRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\HeyPanelNamespaceStyleRule
+    - HeyPanel\Core\DevOps\StaticAnalyze\PHPStan\Rules\AttributeFinalRule

@@ -1,0 +1,156 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\System\SystemConfig\Service;
+
+use HeyPanel\Core\Framework\Bundle;
+use HeyPanel\Core\Framework\Context;
+use HeyPanel\Core\Framework\Feature;
+use HeyPanel\Core\System\SystemConfig\Exception\BundleConfigNotFoundException;
+use HeyPanel\Core\System\SystemConfig\SystemConfigException;
+use HeyPanel\Core\System\SystemConfig\SystemConfigService;
+use HeyPanel\Core\System\SystemConfig\Util\ConfigReader;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+
+class ConfigurationService
+{
+    /**
+     * @param BundleInterface[] $bundles
+     *
+     * @internal
+     */
+    public function __construct(
+        private readonly iterable $bundles,
+        private readonly ConfigReader $configReader,
+        private readonly SystemConfigService $systemConfigService
+    ) {
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     * @throws BundleConfigNotFoundException
+     * @throws SystemConfigException
+     *
+     * @return array<mixed>
+     */
+    public function getConfiguration(string $domain, Context $context): array
+    {
+        $validDomain = preg_match('/^([\w-]+)\.?([\w-]*)$/', $domain, $match);
+
+        if (!$validDomain) {
+            throw SystemConfigException::invalidDomain();
+        }
+
+        $scope = $match[1];
+        $configName = $match[2] !== '' ? $match[2] : null;
+
+        $config = $this->fetchConfiguration($scope === 'core' ? 'System' : $scope, $configName, $context);
+        if (!$config) {
+            throw SystemConfigException::configurationNotFound($scope);
+        }
+
+        $domain = rtrim($domain, '.') . '.';
+
+        foreach ($config as $i => $card) {
+            if (\array_key_exists('flag', $card) && !Feature::isActive($card['flag'])) {
+                unset($config[$i]);
+
+                continue;
+            }
+
+            foreach ($card['elements'] ?? [] as $j => $field) {
+                $newField = ['name' => $domain . $field['name']];
+
+                if (\array_key_exists('flag', $field) && !Feature::isActive($field['flag'])) {
+                    unset($card['elements'][$j]);
+
+                    continue;
+                }
+
+                if (\array_key_exists('type', $field)) {
+                    $newField['type'] = $field['type'];
+                }
+
+                unset($field['type'], $field['name']);
+                $newField['config'] = $field;
+                $card['elements'][$j] = $newField;
+            }
+
+            if (isset($card['elements']) && \is_array($card['elements'])) {
+                $card['elements'] = array_values($card['elements']);
+            }
+
+            $config[$i] = $card;
+        }
+
+        return array_values($config);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getResolvedConfiguration(string $domain, Context $context, ?string $channelId = null): array
+    {
+        $config = [];
+        if ($this->checkConfiguration($domain, $context)) {
+            $config = array_merge(
+                $config,
+                $this->enrichValues(
+                    $this->getConfiguration($domain, $context),
+                    $channelId
+                )
+            );
+        }
+
+        return $config;
+    }
+
+    public function checkConfiguration(string $domain, Context $context): bool
+    {
+        try {
+            $this->getConfiguration($domain, $context);
+
+            return true;
+        } catch (\InvalidArgumentException|SystemConfigException|BundleConfigNotFoundException) {
+            return false;
+        }
+    }
+
+    /**
+     * @return array<mixed>|null
+     */
+    private function fetchConfiguration(string $scope, ?string $configName, Context $context): ?array
+    {
+        $technicalName = \array_slice(explode('\\', $scope), -1)[0];
+
+        foreach ($this->bundles as $bundle) {
+            if ($bundle->getName() === $technicalName && $bundle instanceof Bundle) {
+                return $this->configReader->getConfigFromBundle($bundle, $configName);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<mixed> $config
+     *
+     * @return array<mixed>
+     */
+    private function enrichValues(array $config, ?string $channelId): array
+    {
+        foreach ($config as &$card) {
+            if (!\is_array($card['elements'] ?? false)) {
+                continue;
+            }
+
+            foreach ($card['elements'] as &$element) {
+                $element['value'] = $this->systemConfigService->get(
+                    $element['name'],
+                    $channelId
+                ) ?? $element['config']['defaultValue'] ?? '';
+            }
+        }
+
+        return $config;
+    }
+}

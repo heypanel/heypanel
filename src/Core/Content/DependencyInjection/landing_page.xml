@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="HeyPanel\Core\Content\LandingPage\LandingPageDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\Aggregate\LandingPageTranslation\LandingPageTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\Aggregate\LandingPageTag\LandingPageTagDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\Aggregate\LandingPageChannel\LandingPageChannelDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\DataAbstractionLayer\LandingPageIndexer">
+            <argument type="service" id="HeyPanel\Core\Framework\DataAbstractionLayer\Dbal\Common\IteratorFactory"/>
+            <argument type="service" id="landing_page.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+            <tag name="heypanel.entity_indexer" priority="1000"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\Channel\ChannelLandingPageDefinition">
+            <tag name="heypanel.channel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\Channel\LandingPageRoute" public="true">
+            <argument type="service" id="channel.landing_page.repository"/>
+            <argument type="service" id="HeyPanel\Core\Content\Cms\Channel\ChannelCmsPageLoader"/>
+            <argument type="service" id="HeyPanel\Core\Content\LandingPage\Channel\ChannelLandingPageDefinition"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="HeyPanel\Core\Content\LandingPage\LandingPageValidator">
+            <argument type="service" id="validator"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+    </services>
+</container>

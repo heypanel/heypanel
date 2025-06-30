@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="HeyPanel\Core\System\Country\Channel\ChannelCountryDefinition">
+            <tag name="heypanel.channel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Country\CountryDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Country\Aggregate\CountryState\CountryStateDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Country\Aggregate\CountryStateTranslation\CountryStateTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+
+        <service id="HeyPanel\Core\System\Country\Aggregate\CountryTranslation\CountryTranslationDefinition">
+            <tag name="heypanel.entity.definition"/>
+        </service>
+    </services>
+</container>

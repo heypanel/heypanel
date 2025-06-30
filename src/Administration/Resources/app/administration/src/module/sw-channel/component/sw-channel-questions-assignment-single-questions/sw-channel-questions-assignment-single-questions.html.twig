@@ -1,0 +1,79 @@
+{% block sw_channel_questions_assignment_single_questions %}
+<mt-card
+    class="sw-channel-questions-assignment-single-questions"
+    position-identifier="sw-channel-questions-assignment-single-questions"
+    :is-loading="isLoading"
+>
+    <div :style="containerStyle">
+        {% block sw_channel_questions_assignment_single_questions_secondary %}
+        <sw-card-section
+            ref="cardSectionSecondary"
+            secondary
+        >
+            {% block sw_channel_questions_assignment_single_questions_search_field %}
+            <sw-simple-search-field
+                v-model:value="searchTerm"
+                variant="form"
+                size="small"
+                @search-term-change="onChangeSearchTerm"
+            />
+            {% endblock %}
+        </sw-card-section>
+        {% endblock %}
+
+        {% block sw_channel_questions_assignment_single_questions_primary %}
+        <sw-card-section
+            class="sw-channel-questions-assignment-single-questions__card-section-primary"
+            divider="top"
+        >
+            {% block sw_channel_questions_assignment_single_questions_primary_listing %}
+            <sw-entity-listing
+                v-if="questions.length > 0"
+                identifier="sw-channel-questions-assignment-single-questions-list"
+                :repository="questionRepository"
+                :items="questions"
+                :columns="questionColumns"
+                :plain-appearance="true"
+                :skeleton-item-amount="limit"
+                :is-loading="isLoading"
+                :allow-column-edit="false"
+                :allow-inline-edit="false"
+                :allow-delete="false"
+                :show-actions="false"
+                :show-settings="false"
+                @selection-change="onSelectionChange"
+                @select-item="onSelectionChange"
+                @select-all-items="onSelectionChange"
+            >
+                <template #pagination>
+                    {% block sw_channel_questions_assignment_single_questions_primary_listing_pagination %}
+                    <sw-pagination
+                        v-bind="{ page, limit, total }"
+                        :total-visible="3"
+                        :auto-hide="false"
+                        @page-change="onChangePage"
+                    />
+                    {% endblock %}
+                </template>
+            </sw-entity-listing>
+            {% endblock %}
+
+            {% block sw_channel_questions_assignment_single_questions_primary_empty_state %}
+            <sw-empty-state
+                v-else
+                :show-description="false"
+                :title="$tc('sw-channel.detail.questions.titleEmptyState')"
+            >
+                <template #icon>
+                    <img
+                        :src="assetFilter('/administration/administration/static/img/empty-states/questions-empty-state.svg')"
+                        :alt="$tc('sw-channel.detail.questions.titleEmptyState')"
+                    >
+                </template>
+            </sw-empty-state>
+            {% endblock %}
+        </sw-card-section>
+        {% endblock %}
+    </div>
+</mt-card>
+{% endblock %}

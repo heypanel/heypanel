@@ -1,0 +1,37 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Framework\DataAbstractionLayer\Field;
+
+use HeyPanel\Core\Framework\DataAbstractionLayer\FieldSerializer\IntFieldSerializer;
+
+class IntField extends Field implements StorageAware
+{
+    public function __construct(
+        private readonly string $storageName,
+        string $propertyName,
+        private readonly ?int $minValue = null,
+        private readonly ?int $maxValue = null
+    ) {
+        parent::__construct($propertyName);
+    }
+
+    public function getStorageName(): string
+    {
+        return $this->storageName;
+    }
+
+    public function getMinValue(): ?int
+    {
+        return $this->minValue;
+    }
+
+    public function getMaxValue(): ?int
+    {
+        return $this->maxValue;
+    }
+
+    protected function getSerializerClass(): string
+    {
+        return IntFieldSerializer::class;
+    }
+}

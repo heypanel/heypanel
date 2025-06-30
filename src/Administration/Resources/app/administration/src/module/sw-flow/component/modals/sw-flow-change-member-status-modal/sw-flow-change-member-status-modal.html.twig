@@ -1,0 +1,47 @@
+{% block sw_flow_change_member_status_modal %}
+<sw-modal
+    class="sw-flow-change-member-status-modal"
+    :title="$tc('sw-flow.modals.memberStatus.titleChangeCustomerStatus')"
+    :closable="false"
+    @modal-close="onClose"
+>
+    {% block sw_flow_change_member_status_modal_select %}
+    <sw-single-select
+        v-model:value="active"
+        name="sw-field--active"
+        required
+        :highlight-search-term="false"
+        class="sw-flow-change-member-status-modal__type-select"
+        :options="options"
+        :label="$tc('sw-flow.modals.memberStatus.labelCustomerStatus')"
+        :placeholder="$tc('sw-flow.modals.memberStatus.placeholderCustomerStatus')"
+    />
+    {% endblock %}
+
+    {% block sw_flow_change_member_status_modal_footer %}
+    <template #modal-footer>
+        {% block sw_flow_change_member_status_modal_footer_cancel_button %}
+        <mt-button
+            class="sw-flow-change-member-status-modal__cancel-button"
+            size="small"
+            variant="secondary"
+            @click="onClose"
+        >
+            {{ $tc('global.default.cancel') }}
+        </mt-button>
+        {% endblock %}
+
+        {% block sw_flow_change_member_status_modal_footer_save_button %}
+        <mt-button
+            class="sw-flow-change-member-status-modal__save-button"
+            variant="primary"
+            size="small"
+            @click="onAddAction"
+        >
+            {{ sequence.id ? $tc('sw-flow.modals.buttonSaveAction') : $tc('sw-flow.modals.buttonAddAction') }}
+        </mt-button>
+        {% endblock %}
+    </template>
+    {% endblock %}
+</sw-modal>
+{% endblock %}

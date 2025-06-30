@@ -1,0 +1,26 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Framework\DataAbstractionLayer\Write;
+
+use HeyPanel\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use HeyPanel\Core\Framework\DataAbstractionLayer\Write\Command\WriteCommand;
+use HeyPanel\Core\Framework\DataAbstractionLayer\Write\Command\WriteCommandQueue;
+
+/**
+ * @internal
+ */
+interface EntityWriteGatewayInterface
+{
+    public function prefetchExistences(WriteParameterBag $parameterBag): void;
+
+    /**
+     * @param array<string, string> $primaryKey
+     * @param array<string, mixed> $data
+     */
+    public function getExistence(EntityDefinition $definition, array $primaryKey, array $data, WriteCommandQueue $commandQueue): EntityExistence;
+
+    /**
+     * @param list<WriteCommand> $commands
+     */
+    public function execute(array $commands, WriteContext $context): void;
+}

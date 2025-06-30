@@ -1,0 +1,69 @@
+@import "~scss/variables";
+
+.sw-plugin-card {
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    column-gap: 32px;
+    align-items: start;
+    justify-content: left;
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &__label {
+        font-size: var(--font-size-s);
+        line-height: var(--font-line-height-s);
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 0.41px;
+    }
+
+    &__manufacturer {
+        color: var(--color-text-secondary-default);
+        font-size: var(--font-size-2xs);
+        line-height: var(--font-line-height-2xs);
+        font-weight: normal;
+        letter-spacing: 0;
+    }
+
+    &__short-description {
+        font-size: var(--font-size-2xs);
+        line-height: var(--font-line-height-2xs);
+        font-weight: normal;
+        letter-spacing: 0;
+        flex-grow: 1;
+    }
+
+    .plugin-status {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        width: 100%;
+    }
+
+    .button-plugin-install {
+        height: 32px;
+        font-size: $font-size-xxs;
+        font-weight: $font-weight-semi-bold;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: 19px !important;
+    }
+
+    .plugin-installed {
+        height: 23px;
+        color: $color-emerald-500;
+        font-size: $font-size-xs;
+        font-weight: normal;
+        letter-spacing: 0.1px;
+        line-height: 22px;
+        margin-right: 24px;
+
+        .mt-icon {
+            margin-right: 5px;
+        }
+    }
+}

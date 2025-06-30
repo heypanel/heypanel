@@ -1,0 +1,22 @@
+import template from './sw-extension-app-module-error-page.html.twig';
+import './sw-extension-app-module-error-page.scss';
+
+/**
+ * @sw-package checkout
+ * @private
+ */
+export default HeyPanel.Component.wrapComponentConfig({
+    template,
+
+    computed: {
+        assetFilter() {
+            return HeyPanel.Filter.getByName('asset');
+        },
+    },
+
+    methods: {
+        goBack(): void {
+            this.$router.go(-1);
+        },
+    },
+});

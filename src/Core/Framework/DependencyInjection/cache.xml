@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="heypanel.cache.invalidator.storage.redis"
+                 class="HeyPanel\Core\Framework\Adapter\Cache\InvalidatorStorage\RedisInvalidatorStorage" lazy="true">
+            <argument type="service" id="heypanel.cache.invalidator.storage.redis_adapter"/>
+            <tag name="heypanel.cache.invalidator.storage" storage="redis"/>
+        </service>
+        <service id="heypanel.cache.invalidator.storage.mysql"
+                 class="HeyPanel\Core\Framework\Adapter\Cache\InvalidatorStorage\MySQLInvalidatorStorage" lazy="true">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="logger"/>
+
+            <tag name="heypanel.cache.invalidator.storage" storage="mysql"/>
+        </service>
+        <service id="HeyPanel\Core\Framework\Adapter\Cache\InvalidatorStorage\AbstractInvalidatorStorage" lazy="true">
+            <factory service="heypanel.cache.invalidator.storage.locator" method="get"/>
+
+            <argument>%heypanel.cache.invalidation.delay_options.storage%</argument>
+        </service>
+        <service id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator" public="true" lazy="true">
+            <argument type="collection">
+                <argument type="service" id="cache.object"/>
+                <argument type="service" id="cache.http"/>
+            </argument>
+            <argument type="service"
+                      id="HeyPanel\Core\Framework\Adapter\Cache\InvalidatorStorage\AbstractInvalidatorStorage"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+            <argument type="service" id="request_stack"/>
+            <argument>%kernel.environment%</argument>
+        </service>
+
+        <service id="HeyPanel\Core\Framework\Adapter\Cache\CacheClearer">
+            <argument type="collection">
+                <argument type="service" key="object" id="cache.object"/>
+                <argument type="service" key="http" id="cache.http"/>
+            </argument>
+            <argument type="service" id="cache_clearer"/>
+            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator"/>
+            <argument type="service" id="filesystem"/>
+            <argument>%kernel.cache_dir%</argument>
+            <argument>%kernel.environment%</argument>
+            <argument>%heypanel.deployment.cluster_setup%</argument>
+            <argument type="service" id="messenger.default_bus"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="heypanel.cache.invalidator.storage.locator"
+                 class="HeyPanel\Core\Framework\DependencyInjection\TaggedServiceLocator">
+            <argument type="tagged_locator" tag="heypanel.cache.invalidator.storage" index-by="storage"/>
+        </service>
+        
+        <service id="heypanel.cache.invalidator.storage.redis_adapter" class="Redis" public="true">
+            <factory service="HeyPanel\Core\Framework\Adapter\Redis\RedisConnectionProvider" method="getConnection"/>
+            <argument>%heypanel.cache.invalidation.delay_options.connection%</argument>
+        </service>
+
+    </services>
+</container>

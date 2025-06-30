@@ -1,0 +1,141 @@
+{% block sw_category_detail_questions %}
+<div class="sw-category-detail-questions">
+
+    {% block sw_category_detail_question_assignment %}
+    <sw-many-to-many-assignment-card
+        v-if="category.type !== 'folder'"
+        display-variants
+        :title="$tc('sw-category.base.questions.questionAssignmentHeadline')"
+        :entity-collection="category.questions"
+        :columns="questionColumns"
+        :is-loading="isLoading"
+        :disabled="!acl.can('category.editor')"
+        :local-mode="category.isNew()"
+        :criteria="questionCriteria"
+        :select-label="$tc('sw-category.base.questions.questionAssignmentLabel')"
+        :placeholder="$tc('sw-category.base.questions.questionAssignmentPlaceholder')"
+        @paginate="onPaginateManualProductAssignment"
+    >
+
+        {% block sw_category_detail_question_assignment_type_select %}
+        <template #prepend-select>
+
+            {% block sw_category_detail_question_assignment_type_select_field %}
+            <sw-single-select
+                v-model:value="category.questionAssignmentType"
+                class="sw-category-detail-questions__question-assignment-type-select"
+                :label="$tc('sw-category.base.questions.questionAssignmentTypeLabel')"
+                :error="categoryProductAssignmentTypeError"
+                :options="questionAssignmentTypes"
+                :disabled="!acl.can('category.editor')"
+                required
+                show-clearable-button
+            />
+            {% endblock %}
+
+            {% block sw_category_detail_question_assignment_manual_alert %}
+            <mt-banner
+                v-if="category.questionAssignmentType === 'question_stream' && manualAssignedProductsCount > 0"
+                variant="info"
+            >
+                {{ $tc('sw-category.base.questions.alertManualAssignedProductsOnAssignmentTypeStream') }}
+            </mt-banner>
+            {% endblock %}
+        </template>
+        {% endblock %}
+
+        {% block sw_category_detail_question_assignment_stream_select %}
+        <template
+            v-if="category.questionAssignmentType === 'question_stream'"
+            #select
+        >
+
+            {% block sw_category_detail_question_assignment_stream_select_field %}
+            <sw-entity-single-select
+                v-model:value="category.questionStreamId"
+                class="sw-category-detail-questions__question-stream-select"
+                entity="question_stream"
+                show-clearable-button
+                :disabled="!acl.can('category.editor')"
+                :label="$tc('sw-category.base.questions.questionAssignmentTypeStreamLabel')"
+                :help-text="dynamicProductGroupHelpText"
+                :placeholder="$tc('sw-category.base.questions.questionAssignmentTypeStreamPlaceholder')"
+                :error="questionStreamInvalidError || categoryProductStreamIdError"
+            />
+            {% endblock %}
+
+            {% block sw_category_detail_question_assignment_stream_preview_link %}
+            <div class="sw-category-detail-questions__question-stream-preview-link">
+                <router-link
+                    v-if="category.questionStreamId"
+                    :to="{ name: 'sw.question.stream.detail', params: { id: category.questionStreamId } }"
+                >
+                    {{ $tc('sw-category.base.questions.dynamicProductGroupDetailLinkText') }}
+                    <mt-icon
+                        name="regular-long-arrow-right"
+                        size="16px"
+                    />
+                </router-link>
+            </div>
+            {% endblock %}
+        </template>
+        {% endblock %}
+
+        {% block sw_category_detail_question_assignment_stream_preview_grid %}
+        <template
+            v-if="category.questionAssignmentType === 'question_stream'"
+            #data-grid
+        >
+            <sw-question-stream-grid-preview
+                :filters="questionStreamFilter"
+                :columns="questionColumns"
+            />
+        </template>
+        {% endblock %}
+
+        {% block sw_category_detail_question_assignment_column_name %}
+        <template #[nameColumn]="{ item, column }">
+            <router-link
+                :to="{ name: column.routerLink, params: { id: item.id } }"
+            >
+                <sw-question-variant-info :variations="item.variation">
+                    {{ getItemName(item) }}
+                </sw-question-variant-info>
+            </router-link>
+        </template>
+        {% endblock %}
+
+        {% block sw_category_detail_question_assignment_column_manufacturer %}
+        <template #[manufacturerColumn]="{ item, column }">
+            <router-link
+                v-if="getManufacturer(item)"
+                :to="{ name: column.routerLink, params: { id: item.manufacturerId } }"
+            >
+                {{ getManufacturer(item).name || getManufacturer(item).translated.name }}
+            </router-link>
+            <span v-else></span>
+        </template>
+        {% endblock %}
+
+        {% block sw_category_detail_question_assignment_empty_state %}
+        <template #empty-state>
+            <sw-empty-state
+                :title="$tc('sw-category.base.questions.questionAssignmentEmptyStateDescription')"
+                :subline="''"
+                auto-height
+            >
+                <template #icon>
+                    <img
+                        :src="assetFilter('/administration/administration/static/img/empty-states/questions-empty-state.svg')"
+                        :alt="$tc('sw-category.base.questions.questionAssignmentEmptyStateDescription')"
+                    >
+                </template>
+            </sw-empty-state>
+        </template>
+        {% endblock %}
+
+    </sw-many-to-many-assignment-card>
+    {% endblock %}
+
+</div>
+{% endblock %}

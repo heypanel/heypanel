@@ -1,0 +1,45 @@
+<?php declare(strict_types=1);
+
+namespace HeyPanel\Core\Framework\Store\Services;
+
+use GuzzleHttp\ClientInterface;
+
+/**
+ * @internal
+ */
+class TrackingEventClient
+{
+    public function __construct(
+        private readonly ClientInterface $client,
+        private readonly InstanceService $instanceService
+    ) {
+    }
+
+    /**
+     * @param mixed[] $additionalData
+     *
+     * @return array<string, mixed>|null
+     */
+    public function fireTrackingEvent(string $eventName, array $additionalData = []): ?array
+    {
+        if (!$this->instanceService->getInstanceId()) {
+            return null;
+        }
+
+        $additionalData['heypanelVersion'] = $this->instanceService->getHeyPanelVersion();
+        $payload = [
+            'additionalData' => $additionalData,
+            'instanceId' => $this->instanceService->getInstanceId(),
+            'event' => $eventName,
+        ];
+
+        try {
+            $response = $this->client->request('POST', '/swplatform/tracking/events', ['json' => $payload]);
+
+            return json_decode($response->getBody()->getContents(), true, flags: \JSON_THROW_ON_ERROR);
+        } catch (\Exception) {
+        }
+
+        return null;
+    }
+}
