@@ -23,13 +23,14 @@ class MediaIndexer extends EntityIndexer
      * @internal
      */
     public function __construct(
-        private readonly IteratorFactory $iteratorFactory,
-        private readonly EntityRepository $repository,
-        private readonly EntityRepository $thumbnailRepository,
-        private readonly Connection $connection,
+        private readonly IteratorFactory          $iteratorFactory,
+        private readonly EntityRepository         $repository,
+        private readonly EntityRepository         $thumbnailRepository,
+        private readonly Connection               $connection,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly bool $remoteThumbnailsEnable = false
-    ) {
+        private readonly bool                     $remoteThumbnailsEnabled
+    )
+    {
     }
 
     public function getName(): string
@@ -39,6 +40,9 @@ class MediaIndexer extends EntityIndexer
 
     public function iterate(?array $offset): ?EntityIndexingMessage
     {
+        if ($this->remoteThumbnailsEnabled) {
+            return null;
+        }
         $iterator = $this->iteratorFactory->createIterator($this->repository->getDefinition(), $offset);
 
         $ids = $iterator->fetch();
@@ -52,6 +56,9 @@ class MediaIndexer extends EntityIndexer
 
     public function update(EntityWrittenContainerEvent $event): ?EntityIndexingMessage
     {
+        if ($this->remoteThumbnailsEnabled) {
+            return null;
+        }
         $updates = $event->getPrimaryKeys(MediaDefinition::ENTITY_NAME);
 
         if (empty($updates)) {
@@ -63,7 +70,7 @@ class MediaIndexer extends EntityIndexer
 
     public function handle(EntityIndexingMessage $message): void
     {
-        if ($this->remoteThumbnailsEnable) {
+        if ($this->remoteThumbnailsEnabled) {
             return;
         }
 

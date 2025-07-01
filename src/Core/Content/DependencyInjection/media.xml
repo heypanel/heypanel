@@ -278,6 +278,7 @@
             <argument type="service" id="media_thumbnail.repository"/>
             <argument type="service" id="Doctrine\DBAL\Connection"/>
             <argument type="service" id="event_dispatcher"/>
+            <argument>%heypanel.media.remote_thumbnails.enable%</argument>
         </service>
 
         <service id="HeyPanel\Core\Content\Media\DataAbstractionLayer\MediaFolderConfigurationIndexer">
