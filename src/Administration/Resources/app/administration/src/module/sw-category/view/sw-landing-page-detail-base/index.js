@@ -1,5 +1,4 @@
 import template from './sw-landing-page-detail-base.html.twig';
-import './sw-landing-page-detail-base.scss';
 
 const { Mixin } = HeyPanel;
 const { mapPropertyErrors } = HeyPanel.Component.getComponentHelper();
