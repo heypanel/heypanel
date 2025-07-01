@@ -16,6 +16,17 @@ class MaintenanceException extends HttpException
     final public const MAINTENANCE_USER_PASSWORD_TOO_SHORT = 'MAINTENANCE__USER_PASSWORD_TOO_SHORT';
     final public const MAINTENANCE_USER_ALREADY_EXISTS = 'MAINTENANCE__USER_ALREADY_EXISTS';
     final public const MAINTENANCE_WEBSITE_CONFIGURATION_NOT_VALID = 'MAINTENANCE__WEBSITE_CONFIGURATION_NOT_VALID';
+    final public const MAINTENANCE_ENVIRONMENT_VARIABLE_NOT_VALID = 'MAINTENANCE__ENVIRONMENT_VARIABLE_NOT_VALID';
+
+    public static function environmentVariableNotValid(string $variableName, string $actualValue, string $reason): self
+    {
+        return new self(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            self::MAINTENANCE_ENVIRONMENT_VARIABLE_NOT_VALID,
+            'Environment variable "{{ variableName }}" with value "{{ actualValue }}" is not valid: {{ reason }}.',
+            ['variableName' => $variableName, 'actualValue' => $actualValue, 'reason' => $reason]
+        );
+    }
 
     public static function websiteConfigurationNotValid(string $message): self
     {

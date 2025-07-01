@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+namespace HeyPanel\Tests\Integration\Core\Framework\Api\Controller;
 
 use Doctrine\DBAL\Connection;
 use HeyPanel\Core\Defaults;
@@ -215,7 +216,7 @@ class AuthControllerTest extends TestCase
             'locale_id' => Uuid::fromHexToBytes($this->getLocaleIdOfSystemLanguage()),
             'active' => 1,
             'admin' => 1,
-            'created_at' => (new DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+            'created_at' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
         ]);
 
         $this->apiUsernames[] = $username;
@@ -471,7 +472,7 @@ class AuthControllerTest extends TestCase
             'label' => 'test integration',
             'access_key' => $accessKey,
             'secret_access_key' => TestDefaults::HASHED_PASSWORD,
-            'created_at' => (new DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+            'created_at' => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
         ]);
 
         /**

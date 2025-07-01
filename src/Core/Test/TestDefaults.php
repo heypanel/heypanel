@@ -9,5 +9,5 @@ namespace HeyPanel\Core\Test;
 class TestDefaults
 {
     // use pre-hashed password, so we don't need to hash in every test, password is `heypanel`
-    final public const HASHED_PASSWORD = '$2y$10$8U9/94ulFaD.iiLNeWguWOwf0Z1mqxCXONtsf9gsAyGFliLAG4HjC';
+    final public const HASHED_PASSWORD = '$2y$10$WT6NBUXjXb17D48kDQpOIOvX0HY1UZJaafH4bnXjzMJOL62Fpdwmi';
 }
