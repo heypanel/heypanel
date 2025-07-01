@@ -5,22 +5,6 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="HeyPanel\Core\Framework\Adapter\Cache\CacheClearer">
-            <argument type="collection">
-                <argument type="service" key="object" id="cache.object"/>
-                <argument type="service" key="http" id="cache.http"/>
-            </argument>
-            <argument type="service" id="cache_clearer"/>
-            <argument type="service" id="HeyPanel\Core\Framework\Adapter\Cache\CacheInvalidator"/>
-            <argument type="service" id="filesystem"/>
-            <argument>%kernel.cache_dir%</argument>
-            <argument>%kernel.environment%</argument>
-            <argument>%heypanel.deployment.cluster_setup%</argument>
-            <argument type="service" id="messenger.default_bus"/>
-            <argument type="service" id="logger"/>
-            <argument type="service" id="lock.factory"/>
-        </service>
-
         <service id="heypanel.cache.invalidator.storage.redis"
                  class="HeyPanel\Core\Framework\Adapter\Cache\InvalidatorStorage\RedisInvalidatorStorage" lazy="true">
             <argument type="service" id="heypanel.cache.invalidator.storage.redis_adapter"/>
@@ -64,6 +48,7 @@
             <argument>%heypanel.deployment.cluster_setup%</argument>
             <argument type="service" id="messenger.default_bus"/>
             <argument type="service" id="logger"/>
+            <argument type="service" id="lock.factory"/>
         </service>
 
         <service id="heypanel.cache.invalidator.storage.locator"
