@@ -10,6 +10,7 @@ use Symfony\Component\Cache\PruneableInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -17,10 +18,13 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class CacheClearer
 {
+    private const LOCK_TTL = 30;
+    private const LOCK_KEY_CONTAINER = 'container-cache-directories';
+
     /**
-     * @internal
-     *
      * @param CacheItemPoolInterface[] $adapters
+     *
+     * @internal
      */
     public function __construct(
         private readonly array $adapters,
@@ -31,7 +35,8 @@ class CacheClearer
         private readonly string $environment,
         private readonly bool $clusterMode,
         private readonly MessageBusInterface $messageBus,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -81,7 +86,9 @@ class CacheClearer
             $containerCaches[] = $containerPaths->getRealPath();
         }
 
-        $this->filesystem->remove($containerCaches);
+        $this->lock(function () use ($containerCaches): void {
+            $this->filesystem->remove($containerCaches);
+        }, self::LOCK_KEY_CONTAINER, self::LOCK_TTL);
     }
 
     public function scheduleCacheFolderCleanup(): void
@@ -124,7 +131,6 @@ class CacheClearer
         if (!$finder->hasResults()) {
             return;
         }
-
         $remove = [];
         foreach ($finder->getIterator() as $directory) {
             if ($directory->getPathname() !== $this->cacheDir) {
@@ -133,7 +139,26 @@ class CacheClearer
         }
 
         if ($remove !== []) {
-            $this->filesystem->remove($remove);
+            $this->lock(function () use ($remove): void {
+                $this->filesystem->remove($remove);
+            }, self::LOCK_KEY_CONTAINER, self::LOCK_TTL);
+        }
+    }
+
+    /**
+     * Locks the execution of the closure to prevent concurrent executions.
+     *
+     * @see https://symfony.com/doc/current/components/lock.html
+     */
+    private function lock(\Closure $closure, string $key, int $timeToLive): void
+    {
+        $lock = $this->lockFactory->createLock('cache-clearer::' . $key, $timeToLive);
+
+        // The execution is blocked until the key is found or the time to live is reached.
+        if ($lock->acquire(true)) {
+            $closure();
+
+            $lock->release();
         }
     }
 
