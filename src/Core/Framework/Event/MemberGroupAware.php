@@ -2,7 +2,7 @@
 
 namespace HeyPanel\Core\Framework\Event;
 
-interface CustomerGroupAware
+interface MemberGroupAware
 {
     public const MEMBER_GROUP_ID = 'customerGroupId';
 

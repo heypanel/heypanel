@@ -24,18 +24,17 @@ class ChannelContext extends Struct
     protected bool $permisionsLocked = false;
 
     public function __construct(
-        protected Context            $context,
-        protected string             $token,
-        protected ChannelEntity      $channel,
-        protected CurrencyEntity     $currency,
-        protected CustomerGroupEntity  $currentCustomerGroup,
-        protected LanguageInfo       $languageInfo,
+        protected Context $context,
+        protected string $token,
+        protected ChannelEntity $channel,
+        protected CurrencyEntity $currency,
+        protected CustomerGroupEntity $currentCustomerGroup,
+        protected LanguageInfo $languageInfo,
         protected CashRoundingConfig $itemRounding,
         protected CashRoundingConfig $totalRounding,
-        protected ?CustomerEntity      $customer = null,
-        private ?string              $domainId = null
-    )
-    {
+        protected ?CustomerEntity $customer = null,
+        private ?string $domainId = null
+    ) {
     }
 
     /**
@@ -59,10 +58,6 @@ class ChannelContext extends Struct
         $this->context->lockRules();
     }
 
-
-    /**
-     * @return CurrencyEntity
-     */
     public function getCurrency(): CurrencyEntity
     {
         return $this->currency;
@@ -252,5 +247,4 @@ class ChannelContext extends Struct
     {
         $this->totalRounding = $totalRounding;
     }
-
 }

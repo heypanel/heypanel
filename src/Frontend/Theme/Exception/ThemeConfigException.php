@@ -6,7 +6,6 @@ use HeyPanel\Core\Framework\Api\EventListener\ErrorResponseFactory;
 use HeyPanel\Core\Framework\HeyPanelHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class ThemeConfigException extends HeyPanelHttpException
 {
     private const MESSAGE = 'There are {{ errorCount }} error(s) while validating the theme config.';

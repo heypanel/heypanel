@@ -2,7 +2,6 @@
 
 namespace HeyPanel\Core\System\Country;
 
-use HeyPanel\Core\Defaults;
 use HeyPanel\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\BoolField;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\Flag\ApiAware;

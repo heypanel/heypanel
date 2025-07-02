@@ -2,12 +2,11 @@
 
 namespace HeyPanel\Frontend\Theme\Validator;
 
-use ScssPhp\ScssPhp\Colors;
-use ScssPhp\ScssPhp\OutputStyle;
 use HeyPanel\Frontend\Theme\AbstractScssCompiler;
 use HeyPanel\Frontend\Theme\CompilerConfiguration;
 use HeyPanel\Frontend\Theme\Exception\ThemeException;
-
+use ScssPhp\ScssPhp\Colors;
+use ScssPhp\ScssPhp\OutputStyle;
 
 class SCSSValidator
 {

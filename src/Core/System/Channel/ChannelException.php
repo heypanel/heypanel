@@ -21,8 +21,8 @@ class ChannelException extends HttpException
     final public const ENCODING_MISSING_AGGREGATION_EXCEPTION = 'SYSTEM__ENCODING_MISSING_AGGREGATION_EXCEPTION';
     final public const ENCODING_INVALID_STRUCT_EXCEPTION = 'SYSTEM__ENCODING_INVALID_STRUCT_EXCEPTION';
     public const INVALID_TYPE = 'FRAMEWORK__INVALID_TYPE';
-    private const INVALID_UUID_MESSAGE_TEMPLATE = 'Provided %s is not a valid UUID';
     final public const CHANNEL_CONTEXT_PERMISSIONS_LOCKED = 'SYSTEM__HANNEL_CONTEXT_PERMISSIONS_LOCKED';
+    private const INVALID_UUID_MESSAGE_TEMPLATE = 'Provided %s is not a valid UUID';
 
     public static function contextPermissionsLocked(): self
     {

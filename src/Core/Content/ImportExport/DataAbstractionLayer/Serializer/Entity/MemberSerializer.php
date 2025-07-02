@@ -11,7 +11,7 @@ use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Symfony\Contracts\Service\ResetInterface;
 
-class CustomerSerializer extends EntitySerializer implements ResetInterface
+class MemberSerializer extends EntitySerializer implements ResetInterface
 {
     /**
      * @internal

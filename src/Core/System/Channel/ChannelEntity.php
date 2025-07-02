@@ -10,9 +10,9 @@ use HeyPanel\Core\System\Channel\Aggregate\ChannelDomain\ChannelDomainCollection
 use HeyPanel\Core\System\Channel\Aggregate\ChannelType\ChannelTypeEntity;
 use HeyPanel\Core\System\Country\CountryEntity;
 use HeyPanel\Core\System\Currency\CurrencyEntity;
+use HeyPanel\Core\System\Customer\Aggregate\CustomerGroup\CustomerGroupEntity;
 use HeyPanel\Core\System\Language\LanguageCollection;
 use HeyPanel\Core\System\Language\LanguageEntity;
-use HeyPanel\Core\System\Customer\Aggregate\CustomerGroup\CustomerGroupEntity;
 
 class ChannelEntity extends Entity
 {

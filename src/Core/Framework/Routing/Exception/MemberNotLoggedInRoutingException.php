@@ -4,6 +4,6 @@ namespace HeyPanel\Core\Framework\Routing\Exception;
 
 use HeyPanel\Core\Framework\Routing\RoutingException;
 
-class CustomerNotLoggedInRoutingException extends RoutingException
+class MemberNotLoggedInRoutingException extends RoutingException
 {
 }

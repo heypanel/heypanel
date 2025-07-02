@@ -38,25 +38,24 @@ class ThemeService implements ResetInterface
     /**
      * @param EntityRepository<ThemeCollection> $themeRepository
      * @param EntityRepository<EntityCollection<Entity>> $themeChannelRepository
-     * @internal
      *
+     * @internal
      */
     public function __construct(
-        private readonly FrontendPluginRegistry    $extensionRegistry,
-        private readonly EntityRepository          $themeRepository,
-        private readonly EntityRepository          $themeChannelRepository,
-        private readonly ThemeCompilerInterface    $themeCompiler,
-        private readonly AbstractScssCompiler      $scssCompiler,
-        private readonly EventDispatcherInterface  $dispatcher,
-        private readonly AbstractConfigLoader      $configLoader,
-        private readonly Connection                $connection,
-        private readonly SystemConfigService       $configService,
-        private readonly MessageBusInterface       $messageBus,
-        private readonly NotificationService       $notificationService,
-        private readonly ThemeMergedConfigBuilder  $mergedConfigBuilder,
+        private readonly FrontendPluginRegistry $extensionRegistry,
+        private readonly EntityRepository $themeRepository,
+        private readonly EntityRepository $themeChannelRepository,
+        private readonly ThemeCompilerInterface $themeCompiler,
+        private readonly AbstractScssCompiler $scssCompiler,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly AbstractConfigLoader $configLoader,
+        private readonly Connection $connection,
+        private readonly SystemConfigService $configService,
+        private readonly MessageBusInterface $messageBus,
+        private readonly NotificationService $notificationService,
+        private readonly ThemeMergedConfigBuilder $mergedConfigBuilder,
         private readonly ThemeRuntimeConfigService $themeRuntimeConfigService,
-    )
-    {
+    ) {
     }
 
     /**
@@ -64,13 +63,12 @@ class ThemeService implements ResetInterface
      * Use `compileThemeById` to compile all dependend saleschannels
      */
     public function compileTheme(
-        string                                 $channelId,
-        string                                 $themeId,
-        Context                                $context,
+        string $channelId,
+        string $themeId,
+        Context $context,
         ?FrontendPluginConfigurationCollection $configurationCollection = null,
-        bool                                   $withAssets = true
-    ): void
-    {
+        bool $withAssets = true
+    ): void {
         if ($this->isAsyncCompilation($context)) {
             $this->handleAsync($channelId, $themeId, $withAssets, $context);
 
@@ -105,12 +103,11 @@ class ThemeService implements ResetInterface
      * @return array<int, string>
      */
     public function compileThemeById(
-        string                                 $themeId,
-        Context                                $context,
+        string $themeId,
+        Context $context,
         ?FrontendPluginConfigurationCollection $configurationCollection = null,
-        bool                                   $withAssets = true
-    ): array
-    {
+        bool $withAssets = true
+    ): array {
         $mappings = $this->getThemeDependencyMapping($themeId);
         $compiledThemeIds = [];
         foreach ($mappings as $mapping) {
@@ -162,7 +159,7 @@ class ThemeService implements ResetInterface
             $data['configValues'] = array_replace_recursive($currentConfig, $data['configValues']);
 
             foreach ($submittedChanges as $key => $changes) {
-                if (isset($changes['value']) && \is_array($changes['value']) && isset($currentConfig[(string)$key]) && \is_array($currentConfig[(string)$key])) {
+                if (isset($changes['value']) && \is_array($changes['value']) && isset($currentConfig[(string) $key]) && \is_array($currentConfig[(string) $key])) {
                     $data['configValues'][$key]['value'] = array_unique($changes['value']);
                 }
             }
@@ -225,13 +222,12 @@ class ThemeService implements ResetInterface
      * @return array<string, mixed>
      */
     public function validateThemeConfig(
-        string  $themeId,
-        array   $config,
+        string $themeId,
+        array $config,
         Context $context,
-        array   $customAllowedRegex = [],
-        bool    $sanitize = false
-    ): array
-    {
+        array $customAllowedRegex = [],
+        bool $sanitize = false
+    ): array {
         // Get the merged theme config including inherited parent themes.
         $themeConfig = $this->getPlainThemeConfiguration($themeId, $context);
 
@@ -274,14 +270,14 @@ class ThemeService implements ResetInterface
     }
 
     /**
-     * @return array<string, mixed>
      * @throws ThemeException
      * @throws InconsistentCriteriaIdsException
-     *
      * @throws InvalidThemeConfigException
+     *
+     * @return array<string, mixed>
+     *
      * @deprecated tag:v6.8.0 Use `getPlainThemeConfiguration` if you do not need translated labels or help texts or
      * getThemeConfigurationFieldStructure if you need structure with translations
-     *
      */
     public function getThemeConfiguration(string $themeId, bool $translate, Context $context): array
     {
@@ -294,11 +290,11 @@ class ThemeService implements ResetInterface
     }
 
     /**
-     * @return array<string, mixed>
      * @throws ThemeException
      * @throws InconsistentCriteriaIdsException
-     *
      * @throws InvalidThemeConfigException
+     *
+     * @return array<string, mixed>
      */
     public function getPlainThemeConfiguration(string $themeId, Context $context): array
     {
@@ -313,8 +309,8 @@ class ThemeService implements ResetInterface
 
     /**
      * @return array<string, mixed>
-     * @deprecated tag:v6.8.0 Use `getThemeConfigurationFieldStructure` instead
      *
+     * @deprecated tag:v6.8.0 Use `getThemeConfigurationFieldStructure` instead
      */
     public function getThemeConfigurationStructuredFields(string $themeId, bool $translate, Context $context): array
     {
@@ -373,12 +369,11 @@ class ThemeService implements ResetInterface
     }
 
     private function handleAsync(
-        string  $channelId,
-        string  $themeId,
-        bool    $withAssets,
+        string $channelId,
+        string $themeId,
+        bool $withAssets,
         Context $context
-    ): void
-    {
+    ): void {
         $this->messageBus->dispatch(
             new CompileThemeMessage(
                 $channelId,

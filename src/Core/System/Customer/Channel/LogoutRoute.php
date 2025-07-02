@@ -8,8 +8,8 @@ use HeyPanel\Core\Framework\Validation\DataBag\RequestDataBag;
 use HeyPanel\Core\System\Channel\ChannelContext;
 use HeyPanel\Core\System\Channel\Context\ChannelContextPersister;
 use HeyPanel\Core\System\Channel\ContextTokenResponse;
-use HeyPanel\Core\System\Customer\Event\CustomerLogoutEvent;
 use HeyPanel\Core\System\Customer\CustomerEntity;
+use HeyPanel\Core\System\Customer\Event\CustomerLogoutEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 

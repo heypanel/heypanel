@@ -31,9 +31,9 @@ use HeyPanel\Core\System\Channel\Aggregate\ChannelTranslation\ChannelTranslation
 use HeyPanel\Core\System\Channel\Aggregate\ChannelType\ChannelTypeDefinition;
 use HeyPanel\Core\System\Country\CountryDefinition;
 use HeyPanel\Core\System\Currency\CurrencyDefinition;
-use HeyPanel\Core\System\Language\LanguageDefinition;
 use HeyPanel\Core\System\Customer\Aggregate\CustomerGroup\CustomerGroupDefinition;
 use HeyPanel\Core\System\Customer\CustomerDefinition;
+use HeyPanel\Core\System\Language\LanguageDefinition;
 use HeyPanel\Core\System\SystemConfig\SystemConfigDefinition;
 
 class ChannelDefinition extends EntityDefinition

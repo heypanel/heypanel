@@ -39,35 +39,33 @@ class ThemeCompiler implements ThemeCompilerInterface
      * @internal
      */
     public function __construct(
-        private readonly FilesystemOperator       $filesystem,
-        private readonly FilesystemOperator       $tempFilesystem,
-        private readonly CopyBatchInputFactory    $copyBatchInputFactory,
-        private readonly ThemeFileResolver        $themeFileResolver,
-        private readonly UxComponentHelper        $uxComponentHelper,
-        private readonly bool                     $debug,
+        private readonly FilesystemOperator $filesystem,
+        private readonly FilesystemOperator $tempFilesystem,
+        private readonly CopyBatchInputFactory $copyBatchInputFactory,
+        private readonly ThemeFileResolver $themeFileResolver,
+        private readonly UxComponentHelper $uxComponentHelper,
+        private readonly bool $debug,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly ThemeFilesystemResolver  $themeFilesystemResolver,
-        private readonly iterable                 $packages,
-        private readonly CacheInvalidator         $cacheInvalidator,
-        private readonly LoggerInterface          $logger,
+        private readonly ThemeFilesystemResolver $themeFilesystemResolver,
+        private readonly iterable $packages,
+        private readonly CacheInvalidator $cacheInvalidator,
+        private readonly LoggerInterface $logger,
         private readonly AbstractThemePathBuilder $themePathBuilder,
-        private readonly AbstractScssCompiler     $scssCompiler,
-        private readonly array                    $customAllowedRegex = [],
-        private readonly bool                     $validate = false,
-        private readonly array                    $themeFilesystemConfig = [],
-    )
-    {
+        private readonly AbstractScssCompiler $scssCompiler,
+        private readonly array $customAllowedRegex = [],
+        private readonly bool $validate = false,
+        private readonly array $themeFilesystemConfig = [],
+    ) {
     }
 
     public function compileTheme(
-        string                                $channelId,
-        string                                $themeId,
-        FrontendPluginConfiguration           $themeConfig,
+        string $channelId,
+        string $themeId,
+        FrontendPluginConfiguration $themeConfig,
         FrontendPluginConfigurationCollection $configurationCollection,
-        bool                                  $withAssets,
-        Context                               $context
-    ): void
-    {
+        bool $withAssets,
+        Context $context
+    ): void {
         try {
             $resolvedFiles = $this->themeFileResolver->resolveFiles($themeConfig, $configurationCollection, false);
 
@@ -168,9 +166,8 @@ class ThemeCompiler implements ThemeCompilerInterface
      */
     private function copyScriptFilesToTheme(
         FrontendPluginConfigurationCollection $configurationCollection,
-        string                                $themePrefix
-    ): array
-    {
+        string $themePrefix
+    ): array {
         $scriptsDist = $this->getScriptDistFolders($configurationCollection);
         $themePath = 'theme/' . $themePrefix;
         $distRelativePath = 'Resources/app/frontend/dist/frontend';
@@ -271,11 +268,10 @@ class ThemeCompiler implements ThemeCompilerInterface
      * @return list<CopyBatchInput>
      */
     private function getAssets(
-        FrontendPluginConfiguration           $configuration,
+        FrontendPluginConfiguration $configuration,
         FrontendPluginConfigurationCollection $configurationCollection,
-        string                                $outputPath
-    ): array
-    {
+        string $outputPath
+    ): array {
         $collected = [];
 
         if (!$configuration->getAssetPaths()) {
@@ -283,8 +279,8 @@ class ThemeCompiler implements ThemeCompilerInterface
         }
 
         foreach ($configuration->getAssetPaths() as $asset) {
-            if (mb_strpos((string)$asset, '@') === 0) {
-                $name = mb_substr((string)$asset, 1);
+            if (mb_strpos((string) $asset, '@') === 0) {
+                $name = mb_substr((string) $asset, 1);
                 $config = $configurationCollection->getByTechnicalName($name);
                 if (!$config) {
                     throw ThemeException::couldNotFindThemeByName($name);
@@ -310,14 +306,13 @@ class ThemeCompiler implements ThemeCompilerInterface
      * @param array<string, string> $resolveMappings
      */
     private function compileStyles(
-        string                      $concatenatedStyles,
+        string $concatenatedStyles,
         FrontendPluginConfiguration $configuration,
-        array                       $resolveMappings,
-        string                      $channelId,
-        string                      $themeId,
-        Context                     $context
-    ): string
-    {
+        array $resolveMappings,
+        string $channelId,
+        string $themeId,
+        Context $context
+    ): string {
         try {
             $variables = $this->dumpVariables($configuration->getThemeConfig() ?? [], $themeId, $channelId, $context);
             $features = $this->getFeatureConfigScssMap();
@@ -383,7 +378,7 @@ class ThemeCompiler implements ThemeCompilerInterface
     {
         $allFeatures = Feature::getAll();
 
-        $featuresScss = implode(',', array_map(fn($value, $key) => \sprintf('"%s": %s', $key, json_encode($value, \JSON_THROW_ON_ERROR)), $allFeatures, array_keys($allFeatures)));
+        $featuresScss = implode(',', array_map(fn ($value, $key) => \sprintf('"%s": %s', $key, json_encode($value, \JSON_THROW_ON_ERROR)), $allFeatures, array_keys($allFeatures)));
 
         return \sprintf('$sw-features: (%s);', $featuresScss);
     }
@@ -398,7 +393,7 @@ class ThemeCompiler implements ThemeCompilerInterface
      */
     private function formatVariables(array $variables): array
     {
-        return array_map(fn($value, $key) => \sprintf(
+        return array_map(fn ($value, $key) => \sprintf(
             '$%s: %s;',
             $key,
             isset($value) && $value !== '' ? $value : 'null'
@@ -443,9 +438,9 @@ class ThemeCompiler implements ThemeCompilerInterface
             ) {
                 $variables[$key] = '\'' . $data['value'] . '\'';
             } elseif ($data['type'] === 'switch' || $data['type'] === 'checkbox') {
-                $variables[$key] = (int)$data['value'];
+                $variables[$key] = (int) $data['value'];
             } elseif (!\is_array($data['value'])) {
-                $variables[$key] = (string)$data['value'];
+                $variables[$key] = (string) $data['value'];
             }
         }
 
@@ -485,10 +480,9 @@ PHP_EOL;
 
     private function concatenateStyles(
         FileCollection $styleFiles,
-        string         $channelId
-    ): string
-    {
-        $styles = $styleFiles->map(fn(File $file) => \sprintf('@import \'%s\';', $file->getFilepath()));
+        string $channelId
+    ): string {
+        $styles = $styleFiles->map(fn (File $file) => \sprintf('@import \'%s\';', $file->getFilepath()));
 
         $concatenatedStylesEvent = new ThemeCompilerConcatenatedStylesEvent(
             implode("\n", $styles),
@@ -503,14 +497,13 @@ PHP_EOL;
      * @return list<CopyBatchInput>
      */
     private function collectCompiledFiles(
-        string                                $themePrefix,
-        string                                $themeId,
-        string                                $compiled,
-        bool                                  $withAssets,
-        FrontendPluginConfiguration           $themeConfig,
+        string $themePrefix,
+        string $themeId,
+        string $compiled,
+        bool $withAssets,
+        FrontendPluginConfiguration $themeConfig,
         FrontendPluginConfigurationCollection $configurationCollection
-    ): array
-    {
+    ): array {
         $compileLocation = 'theme' . \DIRECTORY_SEPARATOR . $themePrefix;
 
         $tempStream = fopen('php://temp', 'rwb');

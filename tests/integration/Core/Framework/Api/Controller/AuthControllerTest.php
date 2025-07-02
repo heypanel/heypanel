@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace HeyPanel\Tests\Integration\Core\Framework\Api\Controller;
 
 use Doctrine\DBAL\Connection;

@@ -18,8 +18,8 @@ use HeyPanel\Core\System\Currency\Aggregate\CurrencyCountryRounding\CurrencyCoun
 use HeyPanel\Core\System\Currency\Aggregate\CurrencyCountryRounding\CurrencyCountryRoundingEntity;
 use HeyPanel\Core\System\Currency\CurrencyCollection;
 use HeyPanel\Core\System\Currency\CurrencyEntity;
-use HeyPanel\Core\System\Language\LanguageCollection;
 use HeyPanel\Core\System\Customer\Aggregate\CustomerGroup\CustomerGroupCollection;
+use HeyPanel\Core\System\Language\LanguageCollection;
 
 /**
  * @internal

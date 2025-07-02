@@ -23,14 +23,13 @@ class MediaIndexer extends EntityIndexer
      * @internal
      */
     public function __construct(
-        private readonly IteratorFactory          $iteratorFactory,
-        private readonly EntityRepository         $repository,
-        private readonly EntityRepository         $thumbnailRepository,
-        private readonly Connection               $connection,
+        private readonly IteratorFactory $iteratorFactory,
+        private readonly EntityRepository $repository,
+        private readonly EntityRepository $thumbnailRepository,
+        private readonly Connection $connection,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly bool                     $remoteThumbnailsEnabled
-    )
-    {
+        private readonly bool $remoteThumbnailsEnabled
+    ) {
     }
 
     public function getName(): string

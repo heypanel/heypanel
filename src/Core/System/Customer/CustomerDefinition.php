@@ -62,7 +62,6 @@ class CustomerDefinition extends EntityDefinition
             (new StringField('hash', 'hash'))->addFlags(new ApiAware()),
             new FkField('bound_channel_id', 'boundSalesChannelId', ChannelDefinition::class),
             new ManyToOneAssociationField('boundChannel', 'bound_channel_id', ChannelDefinition::class, 'id', false),
-
         ]);
     }
 }

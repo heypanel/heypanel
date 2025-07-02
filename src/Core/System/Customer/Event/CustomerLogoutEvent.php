@@ -4,8 +4,8 @@ namespace HeyPanel\Core\System\Customer\Event;
 
 use HeyPanel\Core\Framework\Context;
 use HeyPanel\Core\Framework\Event\ChannelAware;
-use HeyPanel\Core\Framework\Event\HeyPanelChannelEvent;
 use HeyPanel\Core\Framework\Event\CustomerAware;
+use HeyPanel\Core\Framework\Event\HeyPanelChannelEvent;
 use HeyPanel\Core\System\Channel\ChannelContext;
 use HeyPanel\Core\System\Customer\CustomerEntity;
 use Symfony\Contracts\EventDispatcher\Event;

@@ -22,17 +22,21 @@ class CustomerEntity extends Entity
     protected ?string $hash = null;
 
     protected bool $active;
+
     protected string $customerNumber;
+
     /**
      * @internal
      */
     protected ?string $password = null;
+
     protected ?ChannelEntity $boundChannel = null;
 
     /**
      * @internal
      */
     protected ?string $legacyEncoder = null;
+
     /**
      * @internal
      */
@@ -51,7 +55,6 @@ class CustomerEntity extends Entity
     {
         $this->customerNumber = $customerNumber;
     }
-
 
     public function getBoundChannelId(): ?string
     {
@@ -72,7 +75,6 @@ class CustomerEntity extends Entity
     {
         $this->boundChannel = $boundChannel;
     }
-
 
     public function getHash(): ?string
     {

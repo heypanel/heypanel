@@ -2,7 +2,7 @@
 
 namespace HeyPanel\Core\Framework\Event;
 
-interface CustomerAware
+interface MemberAware
 {
     public const MEMBER_ID = 'customerId';
 

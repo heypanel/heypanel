@@ -2,7 +2,6 @@
 
 namespace HeyPanel\Core\System\Customer\Aggregate\CustomerTag;
 
-use HeyPanel\Core\System\Customer\CustomerDefinition;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\FkField;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\Flag\ApiAware;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
@@ -10,6 +9,7 @@ use HeyPanel\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use HeyPanel\Core\Framework\DataAbstractionLayer\FieldCollection;
 use HeyPanel\Core\Framework\DataAbstractionLayer\MappingEntityDefinition;
+use HeyPanel\Core\System\Customer\CustomerDefinition;
 use HeyPanel\Core\System\Tag\TagDefinition;
 
 class CustomerTagDefinition extends MappingEntityDefinition
