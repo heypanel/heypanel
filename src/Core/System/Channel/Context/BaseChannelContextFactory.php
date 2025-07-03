@@ -3,7 +3,9 @@
 namespace HeyPanel\Core\System\Channel\Context;
 
 use HeyPanel\Core\Framework\Context;
+use HeyPanel\Core\Framework\DataAbstractionLayer\EntityCollection;
 use HeyPanel\Core\Framework\DataAbstractionLayer\EntityRepository;
+use HeyPanel\Core\Framework\DataAbstractionLayer\PartialEntity;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Pricing\CashRoundingConfig;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use HeyPanel\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -32,6 +34,7 @@ class BaseChannelContextFactory extends AbstractBaseChannelContextFactory
      * @param EntityRepository<CustomerGroupCollection> $customerGroupRepository
      * @param EntityRepository<CountryCollection> $countryRepository
      * @param EntityRepository<CurrencyCountryRoundingCollection> $currencyCountryRepository
+     * @param EntityRepository<EntityCollection<PartialEntity>> $languageRepository
      */
     public function __construct(
         private readonly EntityRepository $channelRepository,
@@ -39,8 +42,10 @@ class BaseChannelContextFactory extends AbstractBaseChannelContextFactory
         private readonly EntityRepository $customerGroupRepository,
         private readonly EntityRepository $countryRepository,
         private readonly EntityRepository $currencyCountryRepository,
-        private readonly ContextFactory $contextFactory,
-    ) {
+        private readonly ContextFactory   $contextFactory,
+        private readonly EntityRepository $languageRepository,
+    )
+    {
     }
 
     public function create(string $channelId, array $options = []): BaseChannelContext
@@ -50,10 +55,7 @@ class BaseChannelContextFactory extends AbstractBaseChannelContextFactory
         $criteria->setTitle('base-context-factory::channel');
         $criteria->addAssociation('currency');
         $criteria->addAssociation('domains');
-        $criteria->getAssociation('languages')
-            ->addFilter(new EqualsFilter('id', $context->getLanguageId()))
-            ->addAssociation('translationCode')
-            ->addAssociation('locale');
+
         $channel = $this->channelRepository->search($criteria, $context)->getEntities()->get($channelId);
         if (!$channel instanceof ChannelEntity) {
             throw ChannelException::channelNotFound($channelId);
@@ -104,14 +106,15 @@ class BaseChannelContextFactory extends AbstractBaseChannelContextFactory
 
         $context = new Context(
             $context->getSource(),
+            [],
+            $currency->getId(),
             $context->getLanguageIdChain(),
             $context->getVersionId(),
-            true,
-            $currency->getId(),
             $currency->getFactor(),
+            true,
             $itemRounding
         );
-
+        $languageInfo = $this->getLanguageInfo($context);
         return new BaseChannelContext(
             $context,
             $channel,
@@ -119,23 +122,30 @@ class BaseChannelContextFactory extends AbstractBaseChannelContextFactory
             $customerGroup,
             $itemRounding,
             $totalRounding,
-            $this->getLanguageInfo($channel->getLanguages(), $context->getLanguageId()),
+            $languageInfo,
         );
     }
 
-    private function getLanguageInfo(?LanguageCollection $languages, string $currentLanguageId): LanguageInfo
+    private function getLanguageInfo(Context $context): LanguageInfo
     {
-        $currentLanguage = $languages?->get($currentLanguageId);
-        if ($currentLanguage === null) {
+        $currentLanguageId = $context->getLanguageId();
+        $criteria = (new Criteria([$currentLanguageId]))->addFields([
+            'name',
+            'translationCode.code',
+            'locale.code',
+        ]);
+
+        $currentLanguage = $this->languageRepository->search($criteria, $context)->getEntities()->get($currentLanguageId);
+        if (!$currentLanguage instanceof PartialEntity) {
             throw ChannelException::languageNotFound($currentLanguageId);
         }
 
-        $locale = $currentLanguage->getTranslationCode() ?? $currentLanguage->getLocale();
-        \assert($locale !== null, 'At least the localeId is required, so the fallback should never be null');
+        $locale = $currentLanguage->get('translationCode') ?? $currentLanguage->get('locale');
+        \assert($locale instanceof PartialEntity, 'At least the localeId is required, so the fallback should never be null');
 
         return new LanguageInfo(
-            $currentLanguage->getTranslation('name') ?? $currentLanguage->getName(),
-            $locale->getCode(),
+            $currentLanguage->get('name'),
+            $locale->get('code'),
         );
     }
 
